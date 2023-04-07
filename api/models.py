@@ -47,6 +47,7 @@ class Clients(models.Model):
     email = models.CharField(max_length=45, blank=False)
     document_type = models.ForeignKey(StaticDocumentTypes, on_delete=models.CASCADE, verbose_name='document type relation')
     document_number = models.CharField(max_length=30, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class PersonalType(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -61,7 +62,7 @@ class Personals(models.Model):
     document_type = models.ForeignKey(StaticDocumentTypes, on_delete=models.CASCADE, verbose_name='document type relation')
     document_number = models.CharField(max_length=30, blank=False)
     type = models.ForeignKey(PersonalType, on_delete=models.CASCADE, verbose_name='personal type relation')
-
+    created_at = models.DateTimeField(auto_now_add=True)
 class UserProfileManager(BaseUserManager):
     ''' Funciones para manegar los usuarios'''
 
@@ -111,6 +112,7 @@ class UserProfile(AbstractBaseUser):
     personal = models.ForeignKey(Personals, blank=True, null=True, on_delete=models.CASCADE, verbose_name='personal relation')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
     
     objects = UserProfileManager()
 
@@ -126,6 +128,6 @@ class UserProfile(AbstractBaseUser):
     
 
 class UserSections(models.Model):
-    user_id = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name='user relation')
-    module_section_id = models.ForeignKey(ModuleSections, on_delete=models.CASCADE, verbose_name='module')
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name='user relation')
+    module_section = models.ForeignKey(ModuleSections, on_delete=models.CASCADE, verbose_name='module')
     created_at = models.DateTimeField(auto_now_add=True)

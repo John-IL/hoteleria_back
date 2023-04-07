@@ -12,6 +12,7 @@ from api.models import UserSections, Modules, Sections, ModuleSections, Roles, U
 
 module = ()
 document = ()
+user = ()
 
 with open('data/modules.csv', newline='', encoding='utf-8-sig', mode='r') as f:
     reader = csv.reader(f, delimiter=';')
@@ -24,21 +25,6 @@ with open('data/modules.csv', newline='', encoding='utf-8-sig', mode='r') as f:
         )
 
         module = created[0]
-
-with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
-    reader = csv.reader(f, delimiter=';')
-    for row in reader:
-        created = Sections.objects.get_or_create(
-            name=row[1],
-            route=row[2],
-            is_new=row[3],
-            icon=row[4],
-            status=row[5]
-        )
-        created = ModuleSections.objects.get_or_create(
-            section_id=created[0],
-            module_id=module
-        )
 
 with open('data/roles.csv', newline='', encoding='utf-8-sig', mode='r') as f:
     reader = csv.reader(f, delimiter=';')
@@ -70,7 +56,7 @@ with open('data/documents.csv', newline='', encoding='utf-8-sig', mode='r') as f
 with open('data/user.csv', newline='', encoding='utf-8-sig', mode='r') as f:
     reader = csv.reader(f, delimiter=';')
     for row in reader:
-        created = UserProfile.objects.get_or_create(
+        user = UserProfile.objects.get_or_create(
             first_name=row[1],
             last_name=row[2],
             country_id=row[3],
@@ -80,3 +66,24 @@ with open('data/user.csv', newline='', encoding='utf-8-sig', mode='r') as f:
             document_number=row[7],
             role_id=row[8]
         )
+
+with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
+    reader = csv.reader(f, delimiter=';')
+    for row in reader:
+        section = Sections.objects.get_or_create(
+            name=row[1],
+            route=row[2],
+            is_new=row[3],
+            icon=row[4],
+            status=row[5]
+        )
+        module_section = ModuleSections.objects.get_or_create(
+            section_id=section[0],
+            module_id=module
+        )
+
+        user_section = UserSections.objects.get_or_create(
+            module_section = module_section[0],
+            user_id = user[0].id
+        )
+
