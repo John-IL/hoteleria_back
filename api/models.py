@@ -126,8 +126,88 @@ class UserProfile(AbstractBaseUser):
     def __str__(self):
         return self.first_name
     
-
 class UserSections(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name='user relation')
     module_section = models.ForeignKey(ModuleSections, on_delete=models.CASCADE, verbose_name='module')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class PaymentMethods(models.Model):
+    name = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class RoomCategory(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.CharField(max_length=100)
+    color = models.CharField(max_length=100)
+    image = models.TextField()
+    description = models.TextField()
+    high_continental = models.DecimalField(max_digits=10 ,decimal_places=2)
+    low_continental = models.DecimalField(max_digits=10 ,decimal_places=2)
+    high_america = models.DecimalField(max_digits=10 ,decimal_places=2)
+    low_america = models.DecimalField(max_digits=10 ,decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class RoomCategoryDetail(models.Model):
+    room_category = models.ForeignKey(RoomCategory, on_delete=models.CASCADE, verbose_name="room categoy relation")
+    description = models.TextField()
+    icon = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+class Promotion(models.Model):
+    name = models.CharField(max_length=250)
+    image = models.TextField()
+    description = models.TextField()
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.SmallIntegerField()
+    high_price = models.DecimalField(max_digits=10, decimal_places=2)
+    low_price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Floor(models.Model):
+    number = models.SmallIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Room(models.Model):
+    category = models.ForeignKey(RoomCategory, on_delete=models.CASCADE, verbose_name="room category relation")
+    promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, verbose_name="promotion relation")
+    floor = models.ForeignKey(Floor, on_delete=models.CASCADE, verbose_name="floor relation")
+    name = models.CharField(max_length=100)
+    slug = models.CharField(max_length=200)
+    guest_number = models.IntegerField()
+    number = models.IntegerField()
+    description = models.TextField()
+    has_bed = models.BooleanField(default=False)
+    has_tv = models.BooleanField(default=False)
+    has_hot_water = models.BooleanField(default=False)
+    has_jacuzzi = models.BooleanField(default=False)
+    has_private_bathroom = models.BooleanField(default=False)
+    has_couch = models.BooleanField(default=False)
+    has_balcony = models.BooleanField(default=False)
+    has_wifi = models.BooleanField(default=False)
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.SmallIntegerField() ## add choice field
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class RoomImages(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="room relation")
+    image = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Reserve(models.Model):
+    reserve_date = models.DateField()
+    observation = models.TextField()
+    client =  models.ForeignKey(Clients, on_delete=models.CASCADE, verbose_name="client relation")
+    payment_method = models.ForeignKey(PaymentMethods, on_delete=models.CASCADE, verbose_name="payment method relation")
+    personal = models.ForeignKey(Personals, on_delete=models.CASCADE, verbose_name="personal relation")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Testimonials(models.Model):
+    reserve = models.ForeignKey(Reserve, on_delete=models.CASCADE, verbose_name="reserve relation")
+    client = models.ForeignKey(Clients, on_delete=models.CASCADE, verbose_name="client relation")
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="room relation")
+    desription = models.TextField()
+    status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Banners(models.Model):
+    image = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
