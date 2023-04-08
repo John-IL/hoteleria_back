@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+
 # Create your models here.
 
 class Roles(models.Model):
@@ -25,8 +26,8 @@ class Sections(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class ModuleSections(models.Model):
-    module_id = models.ForeignKey(Modules, on_delete=models.CASCADE, verbose_name='module relation')
-    section_id = models.ForeignKey(Sections, on_delete=models.CASCADE, verbose_name='section relation')
+    module = models.ForeignKey(Modules, on_delete=models.CASCADE, verbose_name='module relation')
+    section = models.ForeignKey(Sections, on_delete=models.CASCADE, verbose_name='section relation')
     created_at = models.DateTimeField(auto_now_add=True)
 
 class StaticDocumentTypes(models.Model):
@@ -116,7 +117,9 @@ class UserProfile(AbstractBaseUser):
     
     objects = UserProfileManager()
 
-    REQUIRED_FIELDS = ['first_name','role']
+    REQUIRED_FIELDS = ['first_name','last_name','country','phone','document_type',
+                       'document_number','role','password']
+    
     USERNAME_FIELD = 'email'
 
     def get_full_name(self):

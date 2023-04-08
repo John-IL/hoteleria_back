@@ -1,14 +1,18 @@
-import pandas as pd
 import os
 import csv
-from datetime import datetime
+import mysql.connector
+from django.contrib.auth.hashers import make_password
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings") 
-
 import django
-
 django.setup()
+
 from api.models import UserSections, Modules, Sections, ModuleSections, Roles, UserProfile, StaticCountries, StaticDocumentTypes
+
+
+cnx = mysql.connector.connect(user=os.environ.get('DB_USER'), password=os.environ.get('DB_PASSWORD'),
+                           host=os.environ.get('DB_HOST'),
+                           database=os.environ.get('DB_NAME'))
 
 module = ()
 document = ()
@@ -64,7 +68,8 @@ with open('data/user.csv', newline='', encoding='utf-8-sig', mode='r') as f:
             email=row[5],
             document_type=document[0],
             document_number=row[7],
-            role_id=row[8]
+            role_id=row[8],
+            password=make_password(password=row[9])
         )
 
 with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
@@ -78,8 +83,8 @@ with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
             status=row[5]
         )
         module_section = ModuleSections.objects.get_or_create(
-            section_id=section[0],
-            module_id=module
+            section_id=section[0].id,
+            module_id=module.id
         )
 
         user_section = UserSections.objects.get_or_create(
@@ -87,3 +92,17 @@ with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
             user_id = user[0].id
         )
 
+## read and executa store procedure
+
+script_sql = "select * from api_userprofile;"
+
+with open("sp/sp_get_data_user_for_email.sql", "r") as archivo:
+    script_sql = archivo.read()
+
+with cnx.cursor() as cursor:
+    cursor.execute(script_sql)
+    cursor.fetchall()
+
+cnx.commit()
+
+## 
