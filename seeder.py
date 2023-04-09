@@ -92,9 +92,7 @@ with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
             user_id = user[0].id
         )
 
-## read and executa store procedure
-
-script_sql = "select * from api_userprofile;"
+## read and execute store procedure
 
 with open("sp/sp_get_data_user_for_email.sql", "r") as archivo:
     script_sql = archivo.read()

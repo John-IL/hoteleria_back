@@ -1,10 +1,6 @@
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,8 +8,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from .models import UserProfile
 from django.contrib.auth.hashers import check_password
+from django.db import connection
+import json
 # Create your views here.
-
 
 class LoginApi(APIView):
 
@@ -37,10 +34,20 @@ class LoginApi(APIView):
             
             token, _ = Token.objects.get_or_create(user=user)
 
+            cursor = connection.cursor()
+
+            cursor.callproc('get_data_user_for_email', [email])
+            result_sp = cursor.fetchall()[0]
+            module = json.loads(result_sp[9])
+            sections = json.loads(result_sp[10])
+
             response = {
                         "message": "LoginSuccessFull",
-                        "token": token.key
+                        "token": token.key,
+                        "data": [result_sp[:9],module,sections]
                         }
+
+            cursor.close()
             return Response(data=response, status=status.HTTP_200_OK)
         
         except UserProfile.DoesNotExist:
