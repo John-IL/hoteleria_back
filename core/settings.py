@@ -18,6 +18,16 @@ DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = []
 
+# Change this on production
+
+ALLOWED_HOSTS = ['*']
+
+# Important
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8080',
+]
+
+CORS_EXPOSE_HEADERS = ['Content-Disposition']
 
 # Application definition
 
@@ -27,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'corsheaders',
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
@@ -36,6 +47,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
