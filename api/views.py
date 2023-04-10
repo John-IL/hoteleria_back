@@ -12,6 +12,7 @@ from django.db import connection
 import json
 # Create your views here.
 
+
 class LoginApi(APIView):
 
     def post(self, request):
@@ -31,29 +32,41 @@ class LoginApi(APIView):
 
             if not pwd_valid:
                 return Response(data={"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             token, _ = Token.objects.get_or_create(user=user)
 
             cursor = connection.cursor()
 
             cursor.callproc('get_data_user_for_email', [email])
-            result_sp = cursor.fetchall()[0]
-            module = json.loads(result_sp[9])
-            sections = json.loads(result_sp[10])
+            result = cursor.fetchall()[0]
+            module = json.loads(result[9])
+            sections = json.loads(result[10])
 
             response = {
-                        "message": "LoginSuccessFull",
-                        "token": token.key,
-                        "data": [result_sp[:9],module,sections]
-                        }
+                "message": "LoginSuccessFull",
+                "token": token.key,
+                "user": {
+                    "ability": {"action": "manage", "subject": "all"},
+                    "arr_modules": module,
+                    "arr_sections": sections,
+                    "email": result[11],
+                    "first_name": result[12],
+                    "last_name": result[13],
+                    "full_name": result[7],
+                    "is_ceo": result[6],
+                    "role_id": result[2],
+                    "role_name": result[8],
+                    "status": result[1],
+                    "status_session": result[1],
+                    "user_id": result[1],
+                }
+            }
 
             cursor.close()
             return Response(data=response, status=status.HTTP_200_OK)
-        
+
         except UserProfile.DoesNotExist:
             return Response(data={"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
-
-        
 
     def get(self, request):
         username = request.data.get('username')
