@@ -144,8 +144,6 @@ class RoomCategory(models.Model):
     color = models.CharField(max_length=100)
     image = models.TextField()
     description = models.TextField()
-    high_continental = models.DecimalField(max_digits=10 ,decimal_places=2)
-    low_continental = models.DecimalField(max_digits=10 ,decimal_places=2)
     high_america = models.DecimalField(max_digits=10 ,decimal_places=2)
     low_america = models.DecimalField(max_digits=10 ,decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -161,8 +159,6 @@ class Promotion(models.Model):
     description = models.TextField()
     cost = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.SmallIntegerField()
-    high_price = models.DecimalField(max_digits=10, decimal_places=2)
-    low_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Floor(models.Model):
@@ -202,6 +198,12 @@ class Reserve(models.Model):
     payment_method = models.ForeignKey(PaymentMethods, on_delete=models.CASCADE, verbose_name="payment method relation")
     personal = models.ForeignKey(Personals, on_delete=models.CASCADE, verbose_name="personal relation")
     created_at = models.DateTimeField(auto_now_add=True)
+
+class ReserveDateDetail(models.Model):
+    start_date = models.DateField()
+    end_date = models.DateField()
+    reserve = models.ForeignKey(Reserve, on_delete=models.CASCADE, verbose_name="reserve date relation")
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="room detail relation")
 
 class Testimonials(models.Model):
     reserve = models.ForeignKey(Reserve, on_delete=models.CASCADE, verbose_name="reserve relation")

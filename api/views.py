@@ -90,3 +90,12 @@ def logout(request):
         return Response(data={"message": "Sign out"}, status=status.HTTP_200_OK)
 
     return Response(data={"message": "Token Invalid"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserApi(APIView):
+
+    def get(self, request):
+        cursor = connection.cursor()
+        cursor.callproc('get_data_user_for_email')
+        result = cursor.fetchall()[0]
+        
