@@ -8,11 +8,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from .models import UserProfile
 from django.contrib.auth.hashers import check_password
-from django.db import connection
 import json
+from .utils import executeSP
 # Create your views here.
-
-
 class LoginApi(APIView):
 
     def post(self, request):
@@ -35,46 +33,29 @@ class LoginApi(APIView):
 
             token, _ = Token.objects.get_or_create(user=user)
 
-            cursor = connection.cursor()
-
-            cursor.callproc('get_data_user_for_email', [email])
-            result = cursor.fetchall()[0]
-            module = json.loads(result[9])
-            sections = json.loads(result[10])
+            result = executeSP('get_data_user_for_email',[email])[0]
+            if result["arr_modules"] and  result["arr_sections"]:
+                result["arr_modules"] = json.loads(result["arr_modules"])
+                result["arr_sections"] = json.loads(result["arr_sections"])
+                result["ability"] = {"action": "manage", "subject": "all"}
 
             response = {
                 "message": "LoginSuccessFull",
                 "token": token.key,
-                "user": {
-                    "ability": {"action": "manage", "subject": "all"},
-                    "arr_modules": module,
-                    "arr_sections": sections,
-                    "email": result[11],
-                    "first_name": result[12],
-                    "last_name": result[13],
-                    "full_name": result[7],
-                    "is_ceo": result[6],
-                    "role_id": result[2],
-                    "role_name": result[8],
-                    "status": result[1],
-                    "status_session": result[1],
-                    "user_id": result[1],
-                }
+                "user":result
             }
 
-            cursor.close()
             return Response(data=response, status=status.HTTP_200_OK)
 
         except UserProfile.DoesNotExist:
             return Response(data={"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        username = request.data.get('username')
-        user = User.objects.get(username=username)
+        email = request.data.get('email')
+        user = UserProfile.objects.get(email=email)
         token, _ = Token.objects.get_or_create(user=user)
         content = {
-            "user": user.username,
-            # "token" : user.auth_token.key
+            "user": user.email,
             "token": token.key
         }
 
@@ -91,11 +72,31 @@ def logout(request):
 
     return Response(data={"message": "Token Invalid"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-class UserApi(APIView):
-
-    def get(self, request):
-        cursor = connection.cursor()
-        cursor.callproc('get_data_user_for_email')
-        result = cursor.fetchall()[0]
-        
+@api_view(['POST'])
+def viewGetUsers(request):
+    search_txt = request.data.get('search_txt')
+    perpage = request.data.get('perpage') if request.data.get('perpage') else 10
+    npage = request.data.get('npage') if request.data.get('npage') else 1
+    orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
+    date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
+    date_to = request.data.get('date_to')
+    is_active = request.data.get('status') if request.data.get('status') else None
+    country = request.data.get('country_id') if request.data.get('country_id') else None
+    document_type = request.data.get('document_type_id') if request.data.get('document_type_id') else None
+    role_id = request.data.get('role_id') if request.data.get('role_id') else None
+    parameters = [
+        search_txt,
+        perpage,
+        npage,
+        orderBy,
+        date_from,
+        date_to,
+        is_active,
+        country,
+        document_type,
+        role_id]
+    result = executeSP('get_users',parameters)
+    content = {
+        "data":result,
+    }
+    return Response(data=content, status=status.HTTP_200_OK)

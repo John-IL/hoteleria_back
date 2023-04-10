@@ -121,13 +121,6 @@ class UserProfile(AbstractBaseUser):
                        'document_number','role','password']
     
     USERNAME_FIELD = 'email'
-
-    def get_full_name(self):
-        '''obtener nombre completo'''
-        return self.first_name + ' ' + self.last_name
-
-    def __str__(self):
-        return self.first_name
     
 class UserSections(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name='user relation')
