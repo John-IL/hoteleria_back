@@ -10,7 +10,7 @@ django.setup()
 from api.models import UserSections, Modules, Sections, ModuleSections, Roles, UserProfile, StaticCountries, StaticDocumentTypes
 
 
-cnx = mysql.connector.connect(user=os.environ.get('DB_USER'), password=os.environ.get('DB_PASSWORD'),
+mydb = mysql.connector.connect(user=os.environ.get('DB_USER'), password=os.environ.get('DB_PASSWORD'),
                            host=os.environ.get('DB_HOST'),
                            database=os.environ.get('DB_NAME'))
 
@@ -94,13 +94,14 @@ with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
 
 ## read and execute store procedure
 
-with open("sp/sp_get_data_user_for_email.sql", "r") as archivo:
-    script_sql = archivo.read()
+archivos_sql = ['sp/1_login.sql','sp/2_get_users.sql']
+cursor = mydb.cursor()
 
-with cnx.cursor() as cursor:
-    cursor.execute(script_sql)
-    cursor.fetchall()
+for archivo in archivos_sql:
+    with open(archivo, 'r') as f:
+        contenido_sql = f.read()
+        cursor.execute(contenido_sql)
 
-cnx.commit()
+mydb.close()
 
 ## 

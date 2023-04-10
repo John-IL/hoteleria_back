@@ -8,12 +8,12 @@ BEGIN
     SELECT id into _user_id from api_userprofile up  where email = _email;
             
                         SELECT up.id user_id,
-                        up.is_active,
+                        up.is_active status,
                         up.role_id,
                         up.document_type_id,
                         up.document_number,
                         up.phone,
-                        up.is_staff,
+                        up.is_staff is_ceo,
                         concat(up.first_name, ' ', up.last_name) full_name,
                         if(up.is_staff = 1, 'ADMIN', r.name) role_name,
                         mo.arrModuls arr_modules,
