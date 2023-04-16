@@ -10,11 +10,9 @@ from .models import UserProfile, Roles, StaticDocumentTypes, StaticCountries
 from django.contrib.auth.hashers import check_password, make_password
 
 import json
-from .utils import executeSP
 from rest_framework.parsers import JSONParser
 from django.http import JsonResponse
-
-
+from .utils import executeSP, paginateBootrstapVue
 from .serializers import RoleSerializer, DocumentTypeSerializer, CountrySerializer
 # Create your views here.
 class LoginApi(APIView):
@@ -102,10 +100,8 @@ def viewGetUsers(request):
         document_type,
         role_id]
     result = executeSP('get_users',parameters)
-    content = {
-        "data":result,
-    }
-    return Response(data=content, status=status.HTTP_200_OK)
+    
+    return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
