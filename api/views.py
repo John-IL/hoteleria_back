@@ -6,10 +6,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from .models import UserProfile
+from .models import UserProfile, Roles, StaticDocumentTypes, StaticCountries
 from django.contrib.auth.hashers import check_password
 import json
 from .utils import executeSP
+
+from .serializers import RoleSerializer, DocumentTypeSerializer, CountrySerializer
 # Create your views here.
 class LoginApi(APIView):
 
@@ -100,3 +102,23 @@ def viewGetUsers(request):
         "data":result,
     }
     return Response(data=content, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def viewGetRoles(request):
+    roles = Roles.objects.all()
+    serializer = RoleSerializer(roles, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def viewGetDocumentTypes(request):
+    document_types = StaticDocumentTypes.objects.all()
+    serializer = DocumentTypeSerializer(document_types, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def viewGetCountries(request):
+    countries = StaticCountries.objects.all()
+    serializer = CountrySerializer(countries, many=True)
+    return Response(serializer.data)
+

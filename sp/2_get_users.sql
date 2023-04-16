@@ -1,4 +1,4 @@
-CREATE DEFINER=`root`@`localhost` PROCEDURE `hotel`.`get_users`(
+CREATE PROCEDURE `hoteleria_fina`.`get_users`(
           IN search_txt VARCHAR(250),
           IN perpage INT,
           IN npage INT,
