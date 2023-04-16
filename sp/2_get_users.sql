@@ -1,4 +1,4 @@
-CREATE PROCEDURE `hoteleria_fina`.`get_users`(
+CREATE PROCEDURE `get_users`(
           IN search_txt VARCHAR(250),
           IN perpage INT,
           IN npage INT,
