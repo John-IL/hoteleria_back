@@ -50,20 +50,6 @@ class Clients(models.Model):
     document_number = models.CharField(max_length=30, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-class PersonalType(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-class Personals(models.Model):
-    first_name = models.CharField(max_length=100, blank=False)
-    last_name = models.CharField(max_length=100, blank=False)
-    country = models.ForeignKey(StaticCountries, on_delete=models.CASCADE, verbose_name='country relation')
-    phone = models.CharField(max_length=45)
-    email = models.CharField(max_length=45, blank=False)
-    document_type = models.ForeignKey(StaticDocumentTypes, on_delete=models.CASCADE, verbose_name='document type relation')
-    document_number = models.CharField(max_length=30, blank=False)
-    type = models.ForeignKey(PersonalType, on_delete=models.CASCADE, verbose_name='personal type relation')
-    created_at = models.DateTimeField(auto_now_add=True)
 class UserProfileManager(BaseUserManager):
     ''' Funciones para manegar los usuarios'''
 
@@ -102,6 +88,14 @@ class UserProfileManager(BaseUserManager):
         return user
 
 class UserProfile(AbstractBaseUser):
+    personal_enum = (
+    ('1','ADMINISTRADOR'),
+    ('2','CHEF'),
+    ('3','SEGURIDAD'),
+    ('4','RECEPCIONISTA'),
+    ('5','LIMPIEZA'),
+    )
+      
     first_name = models.CharField(max_length=100, blank=False)
     last_name = models.CharField(max_length=100, blank=False)
     country = models.ForeignKey(StaticCountries, on_delete=models.CASCADE, verbose_name='country relation')
@@ -110,7 +104,7 @@ class UserProfile(AbstractBaseUser):
     document_type = models.ForeignKey(StaticDocumentTypes, on_delete=models.CASCADE, verbose_name='document type relation')
     document_number = models.CharField(max_length=30, blank=False)
     role = models.ForeignKey(Roles, on_delete=models.CASCADE, verbose_name='role relation')
-    personal = models.ForeignKey(Personals, blank=True, null=True, on_delete=models.CASCADE, verbose_name='personal relation')
+    personal_type = models.CharField(max_length=2, choices=personal_enum, default='4')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -189,7 +183,7 @@ class Reserve(models.Model):
     observation = models.TextField()
     client =  models.ForeignKey(Clients, on_delete=models.CASCADE, verbose_name="client relation")
     payment_method = models.ForeignKey(PaymentMethods, on_delete=models.CASCADE, verbose_name="payment method relation")
-    personal = models.ForeignKey(Personals, on_delete=models.CASCADE, verbose_name="personal relation")
+    personal = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name="personal relation")
     created_at = models.DateTimeField(auto_now_add=True)
 
 class ReserveDateDetail(models.Model):
