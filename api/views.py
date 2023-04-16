@@ -7,9 +7,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from .models import UserProfile, Roles, StaticDocumentTypes, StaticCountries
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
+
 import json
 from .utils import executeSP
+from rest_framework.parsers import JSONParser
+from django.http import JsonResponse
+
 
 from .serializers import RoleSerializer, DocumentTypeSerializer, CountrySerializer
 # Create your views here.
@@ -121,4 +125,43 @@ def viewGetCountries(request):
     countries = StaticCountries.objects.all()
     serializer = CountrySerializer(countries, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def viewRegisterUser(request):
+    # return Response(data=request.__dict__, status=status.HTTP_200_OK)
+    parser = JSONParser()
+    data = parser.parse(request)
+    return JsonResponse(json.dumps(data), safe=False)
+
+    email = request.data.get('email')
+    password = request.data.get('password')
+    first_name = request.data.get('first_name')
+    last_name = request.data.get('last_name')
+    document_type = request.data.get('document_type')
+    document_number = request.data.get('document_number')
+    country = request.data.get('country')
+    phone = request.data.get('phone')
+    role = request.data.get('role')
+    type_user = request.data.get('type')
+    status = request.data.get('status')
+
+
+    parameters = [
+        email,
+        password if password else make_password(document_number),
+        first_name,
+        last_name,
+        document_type,
+        document_number,
+        country,
+        phone,
+        role,
+        type_user
+    ]
+    result = executeSP('register_user',parameters)
+    content = {
+        "data":result,
+    }
+    return Response(data=content, status=status.HTTP_200_OK)
 

@@ -6,7 +6,8 @@ from . import views
 urlpatterns = [
     path('login', views.LoginApi.as_view(), name="login"),
     path('logout', views.logout, name="logout"),
-    path('users/list', views.viewGetUsers, name="list-users"),
+    path('user/list', views.viewGetUsers, name="list-users"),
+    path('user/register', views.viewRegisterUser, name="register-user"),
 
     path('roles/list', views.viewGetRoles, name="list-roles"),
 
