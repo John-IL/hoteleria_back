@@ -17,7 +17,7 @@ def executeSP(sp, parametres):
     return objects
 
 
-def paginateVuex(result, perpage, page):
+def paginateBootrstapVue(result, perpage, page):
 
     total =  result[0]["cc"] if len(result) else len(result)
     from_to = ((page -1 ) * perpage) + 1
