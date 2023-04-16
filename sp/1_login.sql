@@ -37,7 +37,7 @@ BEGIN
                         (SELECT ms2.user_id, 
                              json_arrayagg(json_object('section_id', ms2.section_id, 'title', ms2.name ,'route',ms2.route, 'icon',ms2.icon, 'is_new', ms2.is_new,'module_id', ms2.module_id,'user_id', ms2.user_id)) arrSections from 
                              api_userprofile u 
-                             left join (select DISTINCT ms.section_id section_id, s.name,s.route,s.icon icon, s.is_new is_new, ms.module_id module_id, us.user_id user_id FROM api_usersections us
+                             left join (select DISTINCT ms.section_id section_id, s.name, CONCAT(m.route,"-",s.route) route,s.icon icon, s.is_new is_new, ms.module_id module_id, us.user_id user_id FROM api_usersections us
                              left join api_modulesections ms on ms.id = us.module_section_id
                              left join api_modules m on m.id = ms.module_id
                              LEFT join api_sections s on s.id = ms.section_id
