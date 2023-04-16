@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from .models import UserProfile
 from django.contrib.auth.hashers import check_password
 import json
-from .utils import executeSP
+from .utils import executeSP, paginateVuex
 # Create your views here.
 class LoginApi(APIView):
 
@@ -96,7 +96,5 @@ def viewGetUsers(request):
         document_type,
         role_id]
     result = executeSP('get_users',parameters)
-    content = {
-        "data":result,
-    }
-    return Response(data=content, status=status.HTTP_200_OK)
+
+    return Response(data=paginateVuex(result,perpage,npage), status=status.HTTP_200_OK)

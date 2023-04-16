@@ -47,5 +47,5 @@ BEGIN
                         ON mo.user_id = up.id
                         LEFT JOIN api_roles r
                         ON r.id = up.role_id
-                        WHERE email = _email;
+                        WHERE email=_email;
 end

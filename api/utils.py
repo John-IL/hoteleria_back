@@ -1,4 +1,5 @@
 from django.db import connection
+import math
 
 
 def executeSP(sp, parametres):
@@ -14,3 +15,32 @@ def executeSP(sp, parametres):
         objects.append(obj)
     cursor.close()
     return objects
+
+
+def paginateVuex(result, perpage, page):
+
+    total =  result[0]["cc"] if len(result) else len(result)
+    from_to = ((page -1 ) * perpage) + 1
+    next_page = page + 1
+    last_page = max(int(math.ceil(float(total) / perpage)), 1)
+    prev_page = page - 1
+    perpage = perpage
+    to = (page * perpage)
+    paginate = {
+        "current_page": page,
+        "data": result,
+        "first_page_url": "/?page=1",
+        "to": from_to,
+        "last_page": last_page,
+        "last_page_url": "/?page=" + str(last_page),
+        "next_page_url": "/?page=" + str(next_page) if page != last_page else "",
+        "path": "/",
+        "per_page": perpage,
+        "prev_page_url": "/?page=" + str(prev_page) if page != 1 else "",
+        "perpage": perpage,
+        "to":to,
+        "total":total
+        }
+    
+    return paginate
+
