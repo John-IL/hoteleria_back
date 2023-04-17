@@ -94,7 +94,7 @@ with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
 
 ## read and execute store procedure
 
-archivos_sql = ['sp/1_login.sql','sp/2_get_users.sql']
+archivos_sql = ['sp/1_login.sql','sp/2_get_users.sql', 'sp/3_insert_user.sql']
 cursor = mydb.cursor()
 
 for archivo in archivos_sql:

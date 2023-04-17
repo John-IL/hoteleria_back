@@ -1,9 +1,9 @@
 1;PANEL;panel;0;EditIcon;1
-2;Usuarios;usuarios;0;UserIcon;1
-3;PROMOCIONES;promociones;0;EditIcon;1
+2;RESERVAS;reservas;0;EditIcon;1
+3;CLIENTES;clientes;0;UsersIcon;1
 4;HABITACIONES;habitaciones;0;HomeIcon;1
-5;TESTIMONIOS;testimonios;0;MessageCircleIcon;1
-6;BANNER;banner;0;ImageIcon;1
-7;CATEGORIAS;categorias;0;FilterIcon;1
-8;RESERVAS;reservas;0;EditIcon;1
-9;Clientes;clientes;0;UsersIcon;1
+5;USUARIOS;usuarios;0;UserIcon;1
+6;PROMOCIONES;promociones;0;EditIcon;1
+7;BANNER;banner;0;ImageIcon;1
+8;CATEGORIAS;categorias;0;FilterIcon;1
+9;TESTIMONIOS;testimonios;0;MessageCircleIcon;1

@@ -125,39 +125,27 @@ def viewGetCountries(request):
 
 @api_view(['POST'])
 def viewRegisterUser(request):
-    # return Response(data=request.__dict__, status=status.HTTP_200_OK)
-    parser = JSONParser()
-    data = parser.parse(request)
-    return JsonResponse(json.dumps(data), safe=False)
 
-    email = request.data.get('email')
-    password = request.data.get('password')
-    first_name = request.data.get('first_name')
-    last_name = request.data.get('last_name')
-    document_type = request.data.get('document_type')
+    password =  request.data.get('password')
     document_number = request.data.get('document_number')
-    country = request.data.get('country')
     phone = request.data.get('phone')
-    role = request.data.get('role')
-    type_user = request.data.get('type')
-    status = request.data.get('status')
 
-
-    parameters = [
-        email,
-        password if password else make_password(document_number),
-        first_name,
-        last_name,
-        document_type,
-        document_number,
-        country,
-        phone,
-        role,
-        type_user
-    ]
-    result = executeSP('register_user',parameters)
-    content = {
-        "data":result,
+    user = {
+        "first_name":  request.data.get('first_name'),
+        "last_name": request.data.get('last_name'),
+        "email": request.data.get('email'),
+        "password_user": make_password(password) if password else make_password(document_number),
+        "phone": phone if phone else '',
+        "country": request.data.get('country'),
+        "document_type": request.data.get('document_type'),
+        "document_number": request.data.get('document_number'),
+        "personal_type": request.data.get('personal_type'),
+        "role": request.data.get('role')
     }
-    return Response(data=content, status=status.HTTP_200_OK)
 
+    print(user)
+    parameters = [
+        json.dumps(user)
+    ]
+    result = executeSP('insert_user',parameters)
+    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
