@@ -69,6 +69,7 @@ with open('data/user.csv', newline='', encoding='utf-8-sig', mode='r') as f:
             document_type=document[0],
             document_number=row[7],
             role_id=row[8],
+            personal_type=1,
             password=make_password(password=row[9])
         )
 

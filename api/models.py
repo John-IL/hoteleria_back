@@ -89,11 +89,11 @@ class UserProfileManager(BaseUserManager):
 
 class UserProfile(AbstractBaseUser):
     personal_enum = (
-    ('1','ADMINISTRADOR'),
-    ('2','CHEF'),
-    ('3','SEGURIDAD'),
-    ('4','RECEPCIONISTA'),
-    ('5','LIMPIEZA'),
+    (1,'ADMINISTRADOR'),
+    (2,'CHEF'),
+    (3,'SEGURIDAD'),
+    (4,'RECEPCIONISTA'),
+    (5,'LIMPIEZA'),
     )
       
     first_name = models.CharField(max_length=100, blank=False)
@@ -104,7 +104,7 @@ class UserProfile(AbstractBaseUser):
     document_type = models.ForeignKey(StaticDocumentTypes, on_delete=models.CASCADE, verbose_name='document type relation')
     document_number = models.CharField(max_length=30, blank=False)
     role = models.ForeignKey(Roles, on_delete=models.CASCADE, verbose_name='role relation')
-    personal_type = models.CharField(max_length=2, choices=personal_enum, default='4')
+    personal_type = models.IntegerField(choices=personal_enum)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

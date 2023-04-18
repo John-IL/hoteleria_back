@@ -63,8 +63,8 @@ BEGIN
         
         SET
           @query = CONCAT(
-            "SELECT up.id, concat(up.first_name,' ',up.last_name) full_name, up.phone, up.email, up.document_number, up.is_active, 
-             up.created_at, r.name role, c.name country, dt.name document_type,  ",  cc ," cc 
+            "SELECT up.id, up.first_name, up.last_name, up.phone, up.email, up.document_number, up.is_active, 
+             up.created_at, r.name role, c.id country, up.personal_type,c.name country_name, dt.id document_type, dt.name document_type_name,  ",  cc ," cc 
              FROM api_userprofile up 
             inner join api_roles r on r.id = up.role_id
             inner join api_staticcountries c on c.id = up.country_id
