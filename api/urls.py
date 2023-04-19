@@ -8,6 +8,7 @@ urlpatterns = [
     path('logout', views.logout, name="logout"),
     path('user/list', views.viewGetUsers, name="list-users"),
     path('user/register', views.viewRegisterUser, name="register-user"),
+    path('user/update', views.viewUpdateUser, name="update-user"),
 
     path('roles/list', views.viewGetRoles, name="list-roles"),
 

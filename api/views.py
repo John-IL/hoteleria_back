@@ -143,9 +143,29 @@ def viewRegisterUser(request):
         "role": request.data.get('role')
     }
 
-    print(user)
     parameters = [
         json.dumps(user)
     ]
     result = executeSP('insert_user',parameters)
+    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def viewUpdateUser(request):
+
+    phone = request.data.get('phone')
+
+    user = {
+        "id": request.data.get('id'),
+        "email": request.data.get('email'),
+        "phone": phone if phone else '',
+        "country": request.data.get('country'),
+        "personal_type": request.data.get('personal_type'),
+        "role": request.data.get('role'),
+        "status": request.data.get('is_active')
+    }
+
+    parameters = [
+        json.dumps(user)
+    ]
+    result = executeSP('update_user',parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
