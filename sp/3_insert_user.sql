@@ -48,5 +48,5 @@ BEGIN
 
 commit;
 
-select JSON_OBJECT("code",200,"message","transaction successful") response;
+select JSON_OBJECT("code",200,"message","Usuario registrado correctamente") response;
 end
