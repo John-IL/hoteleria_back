@@ -15,4 +15,7 @@ urlpatterns = [
     path('document-types/list', views.viewGetDocumentTypes, name="list-document-types"),
 
     path('countries/list', views.viewGetCountries, name="list-countries"),
+
+
+    path('promotion/register', views.viewRegisterPromotion, name="register-promotion"),
 ]
