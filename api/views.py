@@ -149,3 +149,20 @@ def viewRegisterUser(request):
     ]
     result = executeSP('insert_user',parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def viewRegisterPromotion(request):
+        promotion = {
+            "name":  request.data.get('name'),
+            "description": request.data.get('description'),
+            "image": request.data.get('image'),
+            "status": request.data.get('status') if request.data.get('status') else 1,
+            "cost": request.data.get('cost')
+        }
+    
+        parameters = [
+            json.dumps(promotion)
+        ]
+        result = executeSP('insert_promotion',parameters)
+        return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)

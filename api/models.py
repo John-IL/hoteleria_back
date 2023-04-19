@@ -142,8 +142,8 @@ class RoomCategoryDetail(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 class Promotion(models.Model):
     name = models.CharField(max_length=250)
-    image = models.TextField()
-    description = models.TextField()
+    image = models.TextField(blank=True)
+    description = models.TextField(blank=True)
     cost = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.SmallIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
