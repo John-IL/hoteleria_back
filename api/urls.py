@@ -53,4 +53,5 @@ urlpatterns = [
 
     # dashboard 
     path('dashboard/indicators', views.viewGetDashboardIndicators, name="dashboard-indicators"),
+    path('dashboard/calendar-reserves', views.viewGetCalendarReserves, name="dashboard-calendar-reserves"),
 ]
