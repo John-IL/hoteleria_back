@@ -1,4 +1,4 @@
-CREATE insert_reserve(
+CREATE PROCEDURE insert_reserve(
             IN _table json,
             IN _detail json)
 BEGIN
