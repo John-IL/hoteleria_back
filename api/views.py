@@ -695,3 +695,9 @@ def viewGetTestimonials(request):
     result = executeSP('get_testimonials',parameters)
     
     return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def viewGetDashboardIndicators(request):
+    result = executeSP('get_dashboard_data',[])
+    return Response(data=result, status=status.HTTP_200_OK)

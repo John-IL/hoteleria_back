@@ -55,4 +55,7 @@ urlpatterns = [
     path('testimonial/register', views.viewRegisterTestimonial, name="register-testimonial"),
     path('testimonial/update', views.viewUpdateTestimonial, name="update-testimonial"),
     path('testimonial/list', views.viewGetTestimonials, name="list-testimonial"),
+
+    # dashboard 
+    path('dashboard/indicators', views.viewGetDashboardIndicators, name="dashboard-indicators"),
 ]
