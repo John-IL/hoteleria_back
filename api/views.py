@@ -208,22 +208,6 @@ def viewRegisterPromotion(request):
         result = executeSP('insert_promotion',parameters)
         return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
 
-@api_view(['POST'])
-def viewUpdatePromotion(request):
-    promotion = {
-        "id": request.data.get('id'),
-        "name": request.data.get('name'),
-        "cost": request.data.get('cost'),
-        "image": request.data.get('image'),
-        "description": request.data.get('description'),
-        "status": request.data.get('status') if request.data.get('status') else 1,
-    }
-
-    parameters = [
-        json.dumps(promotion)
-    ]
-    result = executeSP('update_promotion',parameters)
-    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def viewGetPromotions(request):
@@ -274,7 +258,7 @@ def viewUpdateCategory(request):
         "color": request.data.get('color'),
         "description": request.data.get('description'),
         "image": request.data.get('image'),
-        "status": request.data.get('status') if request.data.get('status') else 1,
+        "status": request.data.get('status')
     }
 
     parameters = [
@@ -322,7 +306,7 @@ def viewUpdateBanner(request):
     banner = {
         "id": request.data.get('id'),
         "image": request.data.get('image'),
-        "status": request.data.get('status') if request.data.get('status') else 1,
+        "status": request.data.get('status')
     }
 
     parameters = [
@@ -378,11 +362,13 @@ def viewUpdateClient(request):
     client = {
         "id": request.data.get('id'),
         "email": request.data.get('email'),
+        "first_name":  request.data.get('first_name'),
+        "last_name":  request.data.get('last_name'),
         "phone": phone if phone else '',
         "country": request.data.get('country'),
-        "personal_type": request.data.get('personal_type'),
-        "role": request.data.get('role'),
-        "status": request.data.get('status') if request.data.get('status') else 1,
+        "document_type": request.data.get('document_type'),
+        "document_number": request.data.get('document_number'),
+        "status": request.data.get('status')
     }
 
     parameters = [
@@ -390,6 +376,12 @@ def viewUpdateClient(request):
     ]
     result = executeSP('update_client',parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def viewGetClientsSelect(request):
+    parameters = []
+    result = executeSP('get_clients_select',parameters)
+    return Response(data=result, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def viewGetClients(request):
@@ -443,7 +435,7 @@ def viewUpdatePromotion(request):
         "cost": request.data.get('cost'),
         "description": request.data.get('description'),
         "image": request.data.get('image'),
-        "status": request.data.get('status') if request.data.get('status') else 1,
+        "status": request.data.get('status'),
     }
 
     parameters = [
@@ -476,19 +468,22 @@ def viewGetPromotions(request):
 # Reserve
 @api_view(['POST'])
 def viewRegisterReserve(request):
-
+    
+    detail = request.data.get('detail')
     reserve = {
         "client":  request.data.get('client'),
         "personal":  request.data.get('personal'),
         "payment_method": request.data.get('payment_method'),
         "description": request.data.get('description'),
         "total": request.data.get('total'),
-        "detail": request.data.get('detail'),
-        "status": 1,
+         "observation": "ninguna",
+        "reserve_date": "2023-10-1",
     }
 
+    print(detail)
     parameters = [
-        json.dumps(reserve)
+        json.dumps(reserve),
+        json.dumps(detail)
     ]
     result = executeSP('insert_reserve',parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
@@ -504,7 +499,7 @@ def viewUpdateReserve(request):
         "description": request.data.get('description'),
         "total": request.data.get('total'),
         "detail": request.data.get('detail'),
-        "status": request.data.get('status') if request.data.get('status') else 1,
+        "status": request.data.get('status')
     }
 
     parameters = [
@@ -577,6 +572,7 @@ def viewUpdateRoom(request):
     room = {
         "id": request.data.get('id'),
         "name": request.data.get('name'),
+        "description": request.data.get('description'),
         "guest_number": request.data.get('guest_number'),
         "number": request.data.get('number'),
         "has_bed": request.data.get('has_bed'),
@@ -588,10 +584,11 @@ def viewUpdateRoom(request):
         "has_balcony": request.data.get('has_balcony'),
         "has_wifi": request.data.get('has_wifi'),
         "cost": request.data.get('cost'),
-        "status": 1,
-        "category": request.data.get('category'),
-        "floor": request.data.get('floor'),
-        "promotion": request.data.get('promotion'),
+        "status": request.data.get('status'),
+        "category_id": request.data.get('category_id'),
+        "slug": request.data.get('slug'),
+        "floor_id": request.data.get('floor_id'),
+        "promotion_id": request.data.get('promotion_id'),
     }
 
     parameters = [
@@ -599,6 +596,20 @@ def viewUpdateRoom(request):
     ]
     result = executeSP('update_room',parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def viewGetRoomsSelect(request):
+    
+    parameters = []
+    result = executeSP('get_rooms_select',parameters)
+    return Response(data=result, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def viewGetMethodSelect(request):
+    
+    parameters = []
+    result = executeSP('get_method_select',parameters)
+    return Response(data=result, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def viewGetRooms(request):
@@ -676,7 +687,7 @@ def viewUpdateTestimonial(request):
         "client": request.data.get('client'),
         "reserve": request.data.get('reserve'),
         "room": request.data.get('room'),
-        "status": request.data.get('status') if request.data.get('status') else 1,
+       "status": request.data.get('status')
     }
 
     parameters = [

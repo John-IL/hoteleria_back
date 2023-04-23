@@ -33,6 +33,7 @@ urlpatterns = [
     path('client/register', views.viewRegisterClient, name="register-client"),
     path('client/update', views.viewUpdateClient, name="update-client"),
     path('client/list', views.viewGetClients, name="list-client"),
+    path('client/list-select', views.viewGetClientsSelect, name="list-clients"),
 
     # promotion
     path('promotion/register', views.viewRegisterPromotion, name="register-promotion"),
@@ -48,7 +49,8 @@ urlpatterns = [
     path('room/register', views.viewRegisterRoom, name="register-room"),
     path('room/update', views.viewUpdateRoom, name="update-room"),
     path('room/list', views.viewGetRooms, name="list-room"),
-
+    path('room/list-select', views.viewGetRoomsSelect, name="list-room-select"),
+    path('method/list-select', views.viewGetMethodSelect, name="list-method-select"),
     # testimonial
     path('testimonial/register', views.viewRegisterTestimonial, name="register-testimonial"),
     path('testimonial/update', views.viewUpdateTestimonial, name="update-testimonial"),

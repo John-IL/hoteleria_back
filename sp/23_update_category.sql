@@ -1,4 +1,4 @@
-CREATE PROCEDURE update_client(
+CREATE PROCEDURE update_category(
             IN _table json)
             
 BEGIN
@@ -20,14 +20,11 @@ BEGIN
 		
 		else
 			
- 			UPDATE api_clients set first_name = _table->>'$.first_name', last_name = _table->>'$.last_name', country_id = _table->>'$.country',
- 								phone = _table->>'$.phone', email = _table->>'$.email', document_type_id = _table->>'$.document_type',
- 								document_number = _table->>'$.document_number', status = _table->>'$.status' where id = _table->>'$.id'; 
- 							  
+ 			update api_roomcategory  set name = _table->>'$.name',color = _table->>'$.color',image = _table->>'$.image',slug = _table->>'$.slug',description = _table->>'$.description', status = _table->>'$.status' where id = _table->>'$.id';
 		end if;
 	
 	commit;
 	
 	select JSON_OBJECT("code",200,"message","transaction successful") response;
          
-  END
+  end

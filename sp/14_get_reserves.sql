@@ -11,30 +11,30 @@ BEGIN
         DECLARE cc INT DEFAULT 0;
         
         SELECT
-          COUNT(t.id) INTO cc
+          COUNT(r.id) INTO cc
         FROM
-          api_testimonials t
-          inner join api_clients c on c.id = t.client_id
-          inner join api_room r on r.id = t.room_id 
+          api_reserve r
+          inner join api_clients c on c.id = r.client_id
+          inner join api_paymentmethods pm on pm.id = r.payment_method_id
         WHERE
         
           CASE
             WHEN (date_to IS NOT NULL AND date_from IS NOT NULL OR date_to != "" AND date_from != "") 
-              THEN DATE(t.created_at) BETWEEN date_from AND date_to
+              THEN DATE(r.created_at) BETWEEN date_from AND date_to
             
             WHEN(date_to IS NOT NULL OR date_to != "") 
-              THEN DATE(t.created_at) <= date_to
+              THEN DATE(r.created_at) <= date_to
             
             WHEN(date_from IS NOT NULL OR date_from != "") 
-              THEN DATE(t.created_at) >= date_from
+              THEN DATE(r.created_at) >= date_from
             ELSE TRUE END
           
           AND 
           
             IF(search_txt IS NULL, TRUE, (
-              t.description like CONCAT('%', search_txt, '%')
+              r.observation like CONCAT('%', search_txt, '%')
               OR concat(c.first_name,' ',c.last_name) LIKE CONCAT('%', IFNULL(search_txt, ''), '%')
-              OR r.number LIKE CONCAT('%', IFNULL(search_txt, ''), '%')
+              OR pm.name LIKE CONCAT('%', IFNULL(search_txt, ''), '%')
               ))
             ;
         
@@ -43,32 +43,32 @@ BEGIN
         
         SET
           @query = CONCAT(
-            "SELECT t.id, t.description, re.id reserve_id, t.status, concat(c.first_name,' ',c.last_name) client,r.number,  ",  cc ," cc 
-             FROM  api_testimonials t
-          inner join api_clients c on c.id = t.client_id
-          inner join api_room r on r.id = t.room_id 
-inner join api_reserve re on re.id = t.reserve_id 
+            "SELECT r.id, r.total,r.observation,pm.name method_payment,concat(up.first_name,' ',up.last_name) personal, r.status, concat(c.first_name,' ',c.last_name) client, r.reserve_date,  ",  cc ," cc 
+             FROM  api_reserve r
+         inner join api_clients c on c.id = r.client_id
+          inner join api_paymentmethods pm on pm.id = r.payment_method_id
+			inner join api_userprofile up on up.id = r.personal_id
             WHERE ",
             
             CASE
               WHEN(date_to IS NOT NULL AND date_from IS NOT NULL OR date_to != "" AND date_from != "") 
-                THEN CONCAT(" date(t.created_at) between '", date_from, "' AND '", date_to,"' AND ")
+                THEN CONCAT(" date(r.created_at) between '", date_from, "' AND '", date_to,"' AND ")
               
               WHEN(date_to IS NOT NULL OR date_to != "") 
-                THEN CONCAT(" date(t.created_at) <= '", date_to, "' AND ")
+                THEN CONCAT(" date(r.created_at) <= '", date_to, "' AND ")
               
               WHEN(date_from IS NOT NULL OR date_from != "") 
-                THEN CONCAT(" date(t.created_at) >= '", date_from, "' AND ")
+                THEN CONCAT(" date(r.created_at) >= '", date_from, "' AND ")
               
               ELSE CONCAT("true and ") END,
               
             IF(search_txt IS NULL OR search_txt = '', ' true ', 
                CONCAT("( concat(c.first_name,' ',c.last_name) like '%", search_txt, "%'
-                        OR r.number like '%", search_txt, "%'
-                        or t.description like '%", search_txt, "%' ")),
+                        OR r.observation like '%", search_txt, "%'
+                        or pm.name like '%", search_txt, "%' ")),
                         
               
-            CONCAT(" order by t.created_at ", orderBy, " limit ", perpage, " offset ", npage, ";")
+            CONCAT(" order by r.reserve_date ", orderBy, " limit ", perpage, " offset ", npage, ";")
           
           );
         
