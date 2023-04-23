@@ -83,7 +83,7 @@ BEGIN
             
             if(_status is null, ' true and ', CONCAT(" c.status = ", _status, " and ")),
             
-            if(_country is null, ' true and ', CONCAT( " c.country_id  = ", _country, " ")),
+            if(_country is null, ' true ', CONCAT( " c.country_id  = ", _country, " ")),
             
               
             " order by c.created_at ", orderBy, " limit ", perpage, " offset ", npage, ";"

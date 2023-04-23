@@ -16,11 +16,6 @@ urlpatterns = [
 
     path('countries/list', views.viewGetCountries, name="list-countries"),
 
-    # promotions
-    path('promotion/register', views.viewRegisterPromotion, name="register-promotion"),
-    path('promotion/update', views.viewUpdatePromotion, name="update-promotion"),
-    path('promotion/list', views.viewGetPromotions, name="list-promotion"),
-
     # category
     path('category/register', views.viewRegisterCategory, name="register-category"),
     path('category/update', views.viewUpdateCategory, name="update-category"),
