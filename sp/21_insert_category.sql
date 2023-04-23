@@ -1,4 +1,4 @@
-CREATE  PROCEDURE insert_client(
+CREATE PROCEDURE insert_category(
             IN _table json)
 BEGIN
 	DECLARE error_msg TEXT DEFAULT '';
@@ -19,9 +19,8 @@ BEGIN
 		
 		else
 			
- 			insert into api_clients  (first_name, last_name, country_id, phone, email, document_type_id, document_number,created_at, status) 
- 						value (_table->>'$.first_name',_table->>'$.last_name', _table->>'$.country', _table->>'$.phone', _table->>'$.email',_table->>'$.document_type',
- 								_table->>'$.document_number',now(), 1);
+ 			insert into api_roomcategory  (name,slug,color,image,status,created_at,description) 
+ 						value (_table->>'$.name',_table->>'$.slug',_table->>'$.color',_table->>'$.image',_table->>'$.status',now(), _table->>'$.description');
  							  
 		end if;
 	

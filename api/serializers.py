@@ -17,3 +17,18 @@ class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.StaticCountries
         fields = ('id', 'name', 'iso')
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RoomCategory
+        fields = ('id', 'name')
+
+class FloorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Floor
+        fields = ('id', 'number')
+
+class PromotionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Promotion
+        fields = ('id', 'name')

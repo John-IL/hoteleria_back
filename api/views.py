@@ -5,12 +5,12 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import UserProfile, Roles, StaticDocumentTypes, StaticCountries
+from .models import UserProfile, Roles, StaticDocumentTypes, StaticCountries, RoomCategory, Floor, Promotion
 from django.contrib.auth.hashers import check_password, make_password
 
 import json
 from .utils import executeSP, paginateBootrstapVue
-from .serializers import RoleSerializer, DocumentTypeSerializer, CountrySerializer
+from .serializers import RoleSerializer, DocumentTypeSerializer, CountrySerializer, CategorySerializer, FloorSerializer, PromotionSerializer
 from django.utils.text import slugify
 
 
@@ -96,6 +96,24 @@ def viewGetDocumentTypes(request):
 def viewGetCountries(request):
     countries = StaticCountries.objects.all()
     serializer = CountrySerializer(countries, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def viewGetCategoriesList(request):
+    categories = RoomCategory.objects.all()
+    serializer = CategorySerializer(categories, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def viewGetRoomFloorsList(request):
+    floors = Floor.objects.all()
+    serializer = FloorSerializer(floors, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def viewGetRoomPromotionsList(request):
+    promotions = Promotion.objects.all()
+    serializer = PromotionSerializer(promotions, many=True)
     return Response(serializer.data)
 
 
@@ -336,18 +354,16 @@ def viewGetBanners(request):
 # Client
 @api_view(['POST'])
 def viewRegisterClient(request):
-
     client = {
         "first_name":  request.data.get('first_name'),
         "last_name": request.data.get('last_name'),
         "email": request.data.get('email'),
-        "phone": phone if phone else '',
+        "phone": request.data.get('phone'),
         "country": request.data.get('country'),
         "document_type": request.data.get('document_type'),
         "document_number": request.data.get('document_number'),
-        "status": 1,
+        "status": request.data.get('status'),
     }
-
     parameters = [
         json.dumps(client)
     ]
@@ -515,7 +531,7 @@ def viewGetReserves(request):
         orderBy,
         date_from,
         date_to,
-        room
+        # room
         # status,
         # client,
     ]
@@ -529,13 +545,11 @@ def viewGetReserves(request):
 def viewRegisterRoom(request):
 
     room = {
-        "floor":  request.data.get('floor'),
-        "personal":  request.data.get('personal'),
-        "promotion": request.data.get('promotion'),
-        "category": request.data.get('category'),
         "name": request.data.get('name'),
+        "slug": request.data.get('slug'),
         "guest_number": request.data.get('guest_number'),
         "number": request.data.get('number'),
+        "description": request.data.get('description'),
         "has_bed": request.data.get('has_bed'),
         "has_tv": request.data.get('has_tv'),
         "has_hot_water": request.data.get('has_hot_water'),
@@ -543,9 +557,14 @@ def viewRegisterRoom(request):
         "has_private_bathroom": request.data.get('has_private_bathroom'),
         "has_couch": request.data.get('has_couch'),
         "has_couch": request.data.get('has_couch'),
+
+
+        "floor":  request.data.get('floor'),
+        "personal":  request.data.get('personal'),
+        "promotion": request.data.get('promotion'),
+        "category": request.data.get('category'),
         "has_wifi": request.data.get('has_wifi'),
         "cost": request.data.get('cost'),
-        "description": request.data.get('description'),
         "status": 1,
     }
 
@@ -560,10 +579,6 @@ def viewUpdateRoom(request):
 
     room = {
         "id": request.data.get('id'),
-        "floor":  request.data.get('floor'),
-        "personal":  request.data.get('personal'),
-        "promotion": request.data.get('promotion'),
-        "category": request.data.get('category'),
         "name": request.data.get('name'),
         "guest_number": request.data.get('guest_number'),
         "number": request.data.get('number'),
@@ -573,11 +588,13 @@ def viewUpdateRoom(request):
         "has_jacuzzi": request.data.get('has_jacuzzi'),
         "has_private_bathroom": request.data.get('has_private_bathroom'),
         "has_couch": request.data.get('has_couch'),
-        "has_couch": request.data.get('has_couch'),
+        "has_balcony": request.data.get('has_balcony'),
         "has_wifi": request.data.get('has_wifi'),
         "cost": request.data.get('cost'),
-        "description": request.data.get('description'),
-        "status": request.data.get('status') if request.data.get('status') else 1,
+        "status": 1,
+        "category": request.data.get('category'),
+        "floor": request.data.get('floor'),
+        "promotion": request.data.get('promotion'),
     }
 
     parameters = [

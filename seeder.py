@@ -86,6 +86,21 @@ with open('data/user.csv', newline='', encoding='utf-8-sig', mode='r') as f:
             personal_type=1,
             password=make_password(password=row[9])
         )
+with open('data/user2.csv', newline='', encoding='utf-8-sig', mode='r') as f:
+    reader = csv.reader(f, delimiter=';')
+    for row in reader:
+        user = UserProfile.objects.get_or_create(
+            first_name=row[1],
+            last_name=row[2],
+            country_id=row[3],
+            phone=row[4],
+            email=row[5],
+            document_type=document[0],
+            document_number=row[7],
+            role_id=row[8],
+            personal_type=1,
+            password=make_password(password=row[9])
+        )
 
 with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
     reader = csv.reader(f, delimiter=';')
@@ -112,7 +127,7 @@ with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
 archivos_sql = ['sp/1_login.sql','sp/2_get_users.sql', 'sp/3_insert_user.sql', 'sp/4_update_user.sql', 'sp/5_insert_client.sql','sp/6_update_client.sql',
                 'sp/7_insert_promotion.sql','sp/8_update_promotion.sql','sp/9_insert_room_detail.sql', 'sp/10_get_clients.sql','sp/11_get_promotions.sql',
                 'sp/12_update_room_detail.sql','sp/13_1_get_room_categories.sql','sp/14_get_reserves.sql','sp/15_insert_reserve.sql','sp/16_insert_testimonial.sql',
-                'sp/17_update_testimonial.sql','sp/18_get_testimonial.sql','sp/19_get_rooms.sql', 'sp/18_list_indicators.sql', 'sp/20_get_calendar_reserves.sql']
+                'sp/17_update_testimonial.sql','sp/18_get_testimonial.sql','sp/19_get_rooms.sql', 'sp/18_list_indicators.sql', 'sp/20_get_calendar_reserves.sql', 'sp/21_insert_category.sql', 'sp/insert_room']
 cursor = mydb.cursor()
 
 for archivo in archivos_sql:
