@@ -697,3 +697,15 @@ def viewGetTestimonials(request):
 def viewGetDashboardIndicators(request):
     result = executeSP('get_dashboard_data',[])
     return Response(data=result, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def viewGetCalendarReserves(request):
+    start_date = request.data.get('start_date')
+    end_date = request.data.get('end_date')
+    parameters = [
+        start_date,
+        end_date,
+    ]
+    result = executeSP('get_calendar_reserves',parameters)
+    return Response(data=result, status=status.HTTP_200_OK)
