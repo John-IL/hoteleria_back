@@ -43,7 +43,7 @@ BEGIN
         
         SET
           @query = CONCAT(
-            "SELECT t.id, t.description, t.status, concat(c.first_name,' ',c.last_name),r.number,  ",  cc ," cc 
+            "SELECT t.id, t.description, t.status, concat(c.first_name,' ',c.last_name) client, r.number, r.id reserve_id,  ",  cc ," cc 
              FROM  api_testimonials t
           inner join api_clients c on c.id = t.client_id
           inner join api_room r on r.id = t.room_id 

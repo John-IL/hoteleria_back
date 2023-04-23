@@ -43,7 +43,7 @@ BEGIN
         
         SET
           @query = CONCAT(
-            "SELECT p.name, p.image, p.description, p.cost, p.status,  ",  cc ," cc 
+            "SELECT p.id, p.name, p.image, p.description, p.cost, p.status,  ",  cc ," cc 
              FROM api_promotion p 
             WHERE ",
             
