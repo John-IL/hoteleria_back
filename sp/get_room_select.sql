@@ -5,4 +5,4 @@ BEGIN
 
 	select r.id , r.`number` from api_room r;
 
-EN
+END
