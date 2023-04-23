@@ -553,9 +553,9 @@ def viewRegisterRoom(request):
         "has_jacuzzi": request.data.get('has_jacuzzi') if request.data.get('has_jacuzzi') else 0,
         "has_private_bathroom": request.data.get('has_private_bathroom') if request.data.get('has_private_bathroom') else 0,
         "has_couch": request.data.get('has_couch') if request.data.get('has_couch') else 0,
-        "floor":  request.data.get('floor'),
-        "promotion": request.data.get('promotion'),
-        "category": request.data.get('category'),
+        "floor":  request.data.get('floor_id'),
+        "promotion": request.data.get('promotion_id'),
+        "category": request.data.get('category_id'),
         "cost": request.data.get('cost'),
         "status": 1,
     }
