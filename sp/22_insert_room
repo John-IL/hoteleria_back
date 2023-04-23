@@ -1,6 +1,5 @@
-CREATE  PROCEDURE insert_room(
-            IN _table json,
-            IN _detail json)
+CREATE PROCEDURE insert_room(
+            IN _table json)
 BEGIN
 	DECLARE error_msg TEXT DEFAULT '';
 	DECLARE error_code INT;
@@ -14,7 +13,7 @@ BEGIN
 	
   	start transaction;
 	       
-		if(json_length(_detail) <= 0) then 
+		if(json_length(_table) <= 0) then 
 		
 			select JSON_OBJECT("code",500,"message","data cannot be null") response;
 			rollback;
@@ -45,6 +44,7 @@ BEGIN
  			_table->>'$.name',
  			_table->>'$.slug',
  			_table->>'$.guest_number',
+ 			_table->>'$.description',
  			_table->>'$.number',
  			_table->>'$.has_bed',
  			_table->>'$.has_tv',
@@ -59,10 +59,7 @@ BEGIN
  			now(),
  			_table->>'$.category',
  			_table->>'$.floor',
- 			_table->>'$.promotion',
- 			
- 		
- 			);
+ 			_table->>'$.promotion');
  			
 		end if;
 	

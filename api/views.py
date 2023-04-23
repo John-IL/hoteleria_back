@@ -546,24 +546,21 @@ def viewRegisterRoom(request):
 
     room = {
         "name": request.data.get('name'),
-        "slug": request.data.get('slug'),
+        "slug": slugify(request.data.get('name')),
         "guest_number": request.data.get('guest_number'),
         "number": request.data.get('number'),
         "description": request.data.get('description'),
-        "has_bed": request.data.get('has_bed'),
-        "has_tv": request.data.get('has_tv'),
-        "has_hot_water": request.data.get('has_hot_water'),
-        "has_jacuzzi": request.data.get('has_jacuzzi'),
-        "has_private_bathroom": request.data.get('has_private_bathroom'),
-        "has_couch": request.data.get('has_couch'),
-        "has_couch": request.data.get('has_couch'),
-
-
+        "has_bed": request.data.get('has_bed') if request.data.get('has_bed') else 0,
+        "has_wifi": request.data.get('has_wifi') if request.data.get('has_wifi') else 0,
+        "has_balcony": request.data.get('has_balcony') if request.data.get('has_balcony') else 0,
+        "has_tv": request.data.get('has_tv') if request.data.get('has_tv') else 0,
+        "has_hot_water": request.data.get('has_hot_water') if request.data.get('has_hot_water') else 0,
+        "has_jacuzzi": request.data.get('has_jacuzzi') if request.data.get('has_jacuzzi') else 0,
+        "has_private_bathroom": request.data.get('has_private_bathroom') if request.data.get('has_private_bathroom') else 0,
+        "has_couch": request.data.get('has_couch') if request.data.get('has_couch') else 0,
         "floor":  request.data.get('floor'),
-        "personal":  request.data.get('personal'),
         "promotion": request.data.get('promotion'),
         "category": request.data.get('category'),
-        "has_wifi": request.data.get('has_wifi'),
         "cost": request.data.get('cost'),
         "status": 1,
     }
