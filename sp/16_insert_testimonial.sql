@@ -1,4 +1,4 @@
-CREATE PROCEDURE update_client(
+CREATE PROCEDURE insert_testimonial(
             IN _table json)
             
 BEGIN
@@ -20,10 +20,8 @@ BEGIN
 		
 		else
 			
- 			UPDATE client set first_name = _table->>'$.first_name', last_name = _table->>'$.last_name', country_id = _table->>'$.country',
- 								phone = _table->>'$.phone', email = _table->>'$.email', document_type_id = _table->>'$.document_type',
- 								document_number = _table->>'$.document_number', status = _table->>'$.status' where id = _data->>'$.id'; 
- 							  
+ 			insert into api_testimonials (reserve_id,client_id,room_id,description,status,created_at) 
+ 						value (_table->>'$.reserve',_table->>'$.client',_table->>'$.room',_table->>'$.description',_table->>'$.status',now());
 		end if;
 	
 	commit;

@@ -29,16 +29,19 @@ class ModuleSections(models.Model):
     module = models.ForeignKey(Modules, on_delete=models.CASCADE, verbose_name='module relation')
     section = models.ForeignKey(Sections, on_delete=models.CASCADE, verbose_name='section relation')
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 
 class StaticDocumentTypes(models.Model):
     name = models.CharField(max_length=50, unique=True)
     sunat_code = models.SmallIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 
 class StaticCountries(models.Model):
     name = models.CharField(max_length=50, unique=True)
     iso = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 
 class Clients(models.Model):
     first_name = models.CharField(max_length=100, blank=False)
@@ -49,6 +52,7 @@ class Clients(models.Model):
     document_type = models.ForeignKey(StaticDocumentTypes, on_delete=models.CASCADE, verbose_name='document type relation')
     document_number = models.CharField(max_length=30, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 
 class UserProfileManager(BaseUserManager):
     ''' Funciones para manegar los usuarios'''
@@ -124,6 +128,7 @@ class UserSections(models.Model):
 class PaymentMethods(models.Model):
     name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 
 class RoomCategory(models.Model):
     name = models.CharField(max_length=100)
@@ -131,15 +136,15 @@ class RoomCategory(models.Model):
     color = models.CharField(max_length=100)
     image = models.TextField()
     description = models.TextField()
-    high_america = models.DecimalField(max_digits=10 ,decimal_places=2)
-    low_america = models.DecimalField(max_digits=10 ,decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 
 class RoomCategoryDetail(models.Model):
     room_category = models.ForeignKey(RoomCategory, on_delete=models.CASCADE, verbose_name="room categoy relation")
     description = models.TextField()
     icon = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 class Promotion(models.Model):
     name = models.CharField(max_length=250)
     image = models.TextField(blank=True)
@@ -151,6 +156,7 @@ class Promotion(models.Model):
 class Floor(models.Model):
     number = models.SmallIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 
 class Room(models.Model):
     category = models.ForeignKey(RoomCategory, on_delete=models.CASCADE, verbose_name="room category relation")
@@ -177,29 +183,35 @@ class RoomImages(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="room relation")
     image = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 
 class Reserve(models.Model):
     reserve_date = models.DateField()
     observation = models.TextField()
+    total = models.DecimalField(max_digits=10, decimal_places=2)
     client =  models.ForeignKey(Clients, on_delete=models.CASCADE, verbose_name="client relation")
     payment_method = models.ForeignKey(PaymentMethods, on_delete=models.CASCADE, verbose_name="payment method relation")
     personal = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name="personal relation")
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 
 class ReserveDateDetail(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
     reserve = models.ForeignKey(Reserve, on_delete=models.CASCADE, verbose_name="reserve date relation")
     room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="room detail relation")
+    status = models.BooleanField(default=True)
 
 class Testimonials(models.Model):
     reserve = models.ForeignKey(Reserve, on_delete=models.CASCADE, verbose_name="reserve relation")
     client = models.ForeignKey(Clients, on_delete=models.CASCADE, verbose_name="client relation")
     room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="room relation")
     desription = models.TextField()
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Banners(models.Model):
     image = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)

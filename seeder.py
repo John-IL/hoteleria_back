@@ -7,7 +7,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 import django
 django.setup()
 
-from api.models import UserSections, Modules, Sections, ModuleSections, Roles, UserProfile, StaticCountries, StaticDocumentTypes
+from api.models import UserSections,PaymentMethods,Floor, Modules, Sections, ModuleSections, Roles, UserProfile, StaticCountries, StaticDocumentTypes
 
 
 mydb = mysql.connector.connect(user=os.environ.get('DB_USER'), password=os.environ.get('DB_PASSWORD'),
@@ -46,6 +46,20 @@ with open('data/countries.csv', newline='', encoding='utf-8-sig', mode='r') as f
         created = StaticCountries.objects.get_or_create(
             name=row[0],
             iso=row[1]
+        )
+
+with open('data/floor.csv', newline='', encoding='utf-8-sig', mode='r') as f:
+    reader = csv.reader(f, delimiter=';')
+    for row in reader:
+        created = Floor.objects.get_or_create(
+             number=row[0],
+        )
+
+with open('data/method.csv', newline='', encoding='utf-8-sig', mode='r') as f:
+    reader = csv.reader(f, delimiter=';')
+    for row in reader:
+        created = PaymentMethods.objects.get_or_create(
+            name=row[0]
         )
 
 with open('data/documents.csv', newline='', encoding='utf-8-sig', mode='r') as f:
@@ -95,7 +109,10 @@ with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
 
 ## read and execute store procedure
 
-archivos_sql = ['sp/1_login.sql','sp/2_get_users.sql', 'sp/3_insert_user.sql', 'sp/4_update_user.sql']
+archivos_sql = ['sp/1_login.sql','sp/2_get_users.sql', 'sp/3_insert_user.sql', 'sp/4_update_user.sql', 'sp/5_insert_client.sql','sp/6_update_client.sql',
+                'sp/7_insert_promotion.sql','sp/8_update_promotion.sql','sp/9_insert_room_detail.sql', 'sp/10_get_clients.sql','sp/11_get_promotions.sql',
+                'sp/12_update_room_detail.sql','sp/13_get_room_categories.sql','sp/14_get_reserves.sql','sp/15_insert_reserve.sql','sp/16_insert_testimonial.sql',
+                'sp/17_update_testimonial.sql']
 cursor = mydb.cursor()
 
 for archivo in archivos_sql:
