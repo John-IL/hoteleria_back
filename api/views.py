@@ -281,7 +281,7 @@ def viewGetCategories(request):
         date_from,
         date_to,
     ]
-    result = executeSP('get_room_categories',parameters)
+    result = executeSP('get_room_categories2',parameters)
     
     return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
 
