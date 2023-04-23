@@ -188,6 +188,7 @@ class RoomImages(models.Model):
 class Reserve(models.Model):
     reserve_date = models.DateField()
     observation = models.TextField()
+    total = models.DecimalField(max_digits=10, decimal_places=2)
     client =  models.ForeignKey(Clients, on_delete=models.CASCADE, verbose_name="client relation")
     payment_method = models.ForeignKey(PaymentMethods, on_delete=models.CASCADE, verbose_name="payment method relation")
     personal = models.ForeignKey(UserProfile, on_delete=models.CASCADE, verbose_name="personal relation")
@@ -197,6 +198,7 @@ class Reserve(models.Model):
 class ReserveDateDetail(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
     reserve = models.ForeignKey(Reserve, on_delete=models.CASCADE, verbose_name="reserve date relation")
     room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="room detail relation")
     status = models.BooleanField(default=True)

@@ -45,9 +45,9 @@ BEGIN
         
         SET
           @query = CONCAT(
-            "SELECT  r.reserve_date, r.observation, r.client, r.payment_method_id, r.personal, ",  cc ," cc ,  
+            "SELECT r.total, r.reserve_date, r.observation, r.client, r.payment_method_id, r.personal, ",  cc ," cc ,  
 			count(rd.id) ndetail, 
- JSON_ARRAYAGG(JSON_OBJECT('id',rd.id, 'start_date',rd.start_date,'end_date',rd.end_date,'room',rd.room_id)) detail FROM api_reserve r 
+ JSON_ARRAYAGG(JSON_OBJECT('id',rd.id,'cost',rd.cost, 'start_date',rd.start_date,'end_date',rd.end_date,'room',rd.room_id)) detail FROM api_reserve r 
 			inner join api_reservedatedetail rd on rd.reserve_id = r.id
 			inner join api_clients c on c.id = r.client_id
             WHERE ",
