@@ -112,7 +112,7 @@ with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
 archivos_sql = ['sp/1_login.sql','sp/2_get_users.sql', 'sp/3_insert_user.sql', 'sp/4_update_user.sql', 'sp/5_insert_client.sql','sp/6_update_client.sql',
                 'sp/7_insert_promotion.sql','sp/8_update_promotion.sql','sp/9_insert_room_detail.sql', 'sp/10_get_clients.sql','sp/11_get_promotions.sql',
                 'sp/12_update_room_detail.sql','sp/13_get_room_categories.sql','sp/14_get_reserves.sql','sp/15_insert_reserve.sql','sp/16_insert_testimonial.sql',
-                'sp/17_update_testimonial.sql']
+                'sp/17_update_testimonial.sql','sp/18_get_testimonial.sql','sp/19_get_rooms.sql']
 cursor = mydb.cursor()
 
 for archivo in archivos_sql:

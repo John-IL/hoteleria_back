@@ -4,14 +4,11 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.decorators import api_view
 from .models import UserProfile, Roles, StaticDocumentTypes, StaticCountries
 from django.contrib.auth.hashers import check_password, make_password
 
 import json
-from rest_framework.parsers import JSONParser
-from django.http import JsonResponse
 from .utils import executeSP, paginateBootrstapVue
 from .serializers import RoleSerializer, DocumentTypeSerializer, CountrySerializer
 from django.utils.text import slugify
@@ -218,7 +215,7 @@ def viewGetPromotions(request):
     orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
     date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status = request.data.get('status') if request.data.get('status') else None
+    status_promotion = request.data.get('status') if request.data.get('status') else None
     parameters = [
         search_txt,
         perpage,
@@ -226,7 +223,7 @@ def viewGetPromotions(request):
         orderBy,
         date_from,
         date_to,
-        status,
+        status_promotion,
     ]
     result = executeSP('get_promotions',parameters)
     
@@ -284,7 +281,7 @@ def viewGetCategories(request):
         date_from,
         date_to,
     ]
-    result = executeSP('get_promotions',parameters)
+    result = executeSP('get_room_categories',parameters)
     
     return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
 
@@ -386,7 +383,7 @@ def viewGetClients(request):
     orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
     date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status = request.data.get('status') if request.data.get('status') else None
+    status_client = request.data.get('status') if request.data.get('status') else None
     country = request.data.get('country_id') if request.data.get('country_id') else None
     document_type = request.data.get('document_type_id') if request.data.get('document_type_id') else None
     parameters = [
@@ -396,9 +393,9 @@ def viewGetClients(request):
         orderBy,
         date_from,
         date_to,
-        is_active,
-        country,
-        document_type]
+        document_type,
+        status_client,
+        country]
     result = executeSP('get_clients',parameters)
     
     return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
@@ -447,7 +444,7 @@ def viewGetPromotions(request):
     orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
     date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status = request.data.get('status') if request.data.get('status') else None
+    status_promotion = request.data.get('status') if request.data.get('status') else None
     parameters = [
         search_txt,
         perpage,
@@ -455,7 +452,7 @@ def viewGetPromotions(request):
         orderBy,
         date_from,
         date_to,
-        status,]
+        status_promotion]
     result = executeSP('get_promotions',parameters)
     
     return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
@@ -508,8 +505,9 @@ def viewGetReserves(request):
     orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
     date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status = request.data.get('status') if request.data.get('status') else None
-    client = request.data.get('client')
+    status_room = request.data.get('status') if request.data.get('status') else None
+    client = request.data.get('client') if request.data.get('client') else None
+    room = request.data.get('room') if request.data.get('room') else None
     parameters = [
         search_txt,
         perpage,
@@ -517,8 +515,9 @@ def viewGetReserves(request):
         orderBy,
         date_from,
         date_to,
-        status,
-        client,
+        room
+        # status,
+        # client,
     ]
     result = executeSP('get_reserves',parameters)
     
@@ -595,7 +594,7 @@ def viewGetRooms(request):
     orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
     date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status = request.data.get('status') if request.data.get('status') else None
+    status_room = request.data.get('status') if request.data.get('status') else None
     floor=  request.data.get('floor'),
     personal=  request.data.get('personal'),
     promotion= request.data.get('promotion'),
@@ -616,20 +615,20 @@ def viewGetRooms(request):
         orderBy,
         date_from,
         date_to,
-        status,
-        floor,
-        personal,
-        promotion,
-        category,
-        guest_number,
-        number,
-        has_bed,
-        has_tv,
-        has_hot_water,
-        has_jacuzzi,
-        has_private_bathroom,
-        has_couch,
-        has_wifi,
+        # status,
+        # floor,
+        # personal,
+        # promotion,
+        # category,
+        # guest_number,
+        # number,
+        # has_bed,
+        # has_tv,
+        # has_hot_water,
+        # has_jacuzzi,
+        # has_private_bathroom,
+        # has_couch,
+        # has_wifi,
     ]
     result = executeSP('get_rooms',parameters)
     
@@ -680,7 +679,6 @@ def viewGetTestimonials(request):
     orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
     date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status = request.data.get('status') if request.data.get('status') else None
     client = request.data.get('client')
     parameters = [
         search_txt,
@@ -688,9 +686,7 @@ def viewGetTestimonials(request):
         npage,
         orderBy,
         date_from,
-        date_to,
-        status,
-        client,
+        date_to
     ]
     result = executeSP('get_testimonials',parameters)
     

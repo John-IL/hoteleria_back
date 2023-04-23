@@ -1,4 +1,4 @@
-CREATE PROCEDURE get_reserves(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `hotel`.`get_reserves`(
           IN search_txt VARCHAR(250),
           IN perpage INT,
           IN npage INT,
@@ -7,7 +7,6 @@ CREATE PROCEDURE get_reserves(
           IN date_to DATE,
           
           IN _room int)
-          
 BEGIN 
         DECLARE cc INT DEFAULT 0;
         
@@ -45,7 +44,7 @@ BEGIN
         
         SET
           @query = CONCAT(
-            "SELECT r.total, r.reserve_date, r.observation, r.client, r.payment_method_id, r.personal, ",  cc ," cc ,  
+            "SELECT r.total, r.reserve_date, r.observation, concat(c.first_name,' ',c.last_name) full_name, r.payment_method_id, r.personal_id, ",  cc ," cc ,  
 			count(rd.id) ndetail, 
  JSON_ARRAYAGG(JSON_OBJECT('id',rd.id,'cost',rd.cost, 'start_date',rd.start_date,'end_date',rd.end_date,'room',rd.room_id)) detail FROM api_reserve r 
 			inner join api_reservedatedetail rd on rd.reserve_id = r.id
@@ -63,7 +62,7 @@ BEGIN
                 			THEN CONCAT(" date(rd.start_date) >= '", date_from, "' AND ")
            ELSE CONCAT(" true and ") END,
               
-           IF(search_txt IS NULL OR search_txt = '', ' true ', 
+           IF(search_txt IS NULL OR search_txt = '', ' true and ', 
                CONCAT("( concat(c.first_name,' ',c.last_name) like '%", search_txt, "%'
                         or r.observation like '%", search_txt, "%') and ")),
                         
