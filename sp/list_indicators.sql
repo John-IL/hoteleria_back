@@ -8,7 +8,7 @@ BEGIn
 
 
 	SELECT count(*) into _users FROM api_userprofile u WHERE u.created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH);
-	SELECT count(*) into _rooms from api_room r WHERE r.status = 0;
+	SELECT count(*) into _rooms from api_room r WHERE r.status = 1;
 	SELECT count(*) into _reserves from api_reserve r WHERE r.created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH);
 	SELECT SUM(r.total)  into _sales from api_reserve r WHERE r.created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH);
 	
