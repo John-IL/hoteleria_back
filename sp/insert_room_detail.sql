@@ -17,7 +17,7 @@ BEGIN
 	       
 		if(json_length(_detail) <= 0) then 
 		
-			select JSON_OBJECT("code",500,"message","data cannot be null") response;
+			select JSON_OBJECT("code",500,"message","Ingrese los datos.") response;
 			rollback;
 		
 		else
@@ -39,6 +39,6 @@ BEGIN
 	
 	commit;
 	
-	select JSON_OBJECT("code",200,"message","transaction successful") response;
+	select JSON_OBJECT("code",200,"message","Satisfactoriamente") response;
          
   END

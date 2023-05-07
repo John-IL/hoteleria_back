@@ -16,7 +16,7 @@ mydb = mysql.connector.connect(user=os.environ.get('DB_USER'), password=os.envir
 
 module = ()
 document = ()
-user = ()
+user = []
 
 with open('data/modules.csv', newline='', encoding='utf-8-sig', mode='r') as f:
     reader = csv.reader(f, delimiter=';')
@@ -74,7 +74,7 @@ with open('data/documents.csv', newline='', encoding='utf-8-sig', mode='r') as f
 with open('data/user.csv', newline='', encoding='utf-8-sig', mode='r') as f:
     reader = csv.reader(f, delimiter=';')
     for row in reader:
-        user = UserProfile.objects.get_or_create(
+        user_aux = UserProfile.objects.get_or_create(
             first_name=row[1],
             last_name=row[2],
             country_id=row[3],
@@ -86,21 +86,8 @@ with open('data/user.csv', newline='', encoding='utf-8-sig', mode='r') as f:
             personal_type=1,
             password=make_password(password=row[9])
         )
-with open('data/user2.csv', newline='', encoding='utf-8-sig', mode='r') as f:
-    reader = csv.reader(f, delimiter=';')
-    for row in reader:
-        user = UserProfile.objects.get_or_create(
-            first_name=row[1],
-            last_name=row[2],
-            country_id=row[3],
-            phone=row[4],
-            email=row[5],
-            document_type=document[0],
-            document_number=row[7],
-            role_id=row[8],
-            personal_type=1,
-            password=make_password(password=row[9])
-        )
+
+        user.append(user_aux[0])
 
 with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
     reader = csv.reader(f, delimiter=';')
@@ -117,10 +104,11 @@ with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
             module_id=module.id
         )
 
-        user_section = UserSections.objects.get_or_create(
-            module_section = module_section[0],
-            user_id = user[0].id
-        )
+        for item in user:
+            user_section = UserSections.objects.get_or_create(
+                module_section = module_section[0],
+                user_id = item.id
+            )
 
 ## read and execute store procedure
 

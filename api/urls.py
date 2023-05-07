@@ -44,6 +44,7 @@ urlpatterns = [
     path('reserve/register', views.viewRegisterReserve, name="register-reserve"),
     path('reserve/update', views.viewUpdateReserve, name="update-reserve"),
     path('reserve/list', views.viewGetReserves, name="list-reserve"),
+    path('reserve/list-select', views.viewGetReserveSelect, name="list-reserve-select"),
 
     # Room
     path('room/register', views.viewRegisterRoom, name="register-room"),

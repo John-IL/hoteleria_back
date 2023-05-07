@@ -16,7 +16,7 @@ BEGIN
        
   if(json_length(_data) <= 0) then 
   
-    SELECT JSON_OBJECT("code",500,"message","data cannot be null") response;
+    SELECT JSON_OBJECT("code",500,"message","Ingrese los datos.") response;
     rollback;
     
     -- end validation and errors
