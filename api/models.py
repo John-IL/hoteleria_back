@@ -206,7 +206,6 @@ class ReserveDateDetail(models.Model):
 class Testimonials(models.Model):
     reserve = models.ForeignKey(Reserve, on_delete=models.CASCADE, verbose_name="reserve relation")
     client = models.ForeignKey(Clients, on_delete=models.CASCADE, verbose_name="client relation")
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="room relation")
     description = models.TextField()
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

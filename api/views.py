@@ -12,9 +12,13 @@ import json
 from .utils import executeSP, paginateBootrstapVue
 from .serializers import RoleSerializer, DocumentTypeSerializer, CountrySerializer, CategorySerializer, FloorSerializer, PromotionSerializer
 from django.utils.text import slugify
-
+from PIL import Image
+import os
+import uuid
 
 # Create your views here.
+
+
 class LoginApi(APIView):
 
     def post(self, request):
@@ -37,8 +41,8 @@ class LoginApi(APIView):
 
             token, _ = Token.objects.get_or_create(user=user)
 
-            result = executeSP('get_data_user_for_email',[email])[0]
-            if result["arr_modules"] and  result["arr_sections"]:
+            result = executeSP('get_data_user_for_email', [email])[0]
+            if result["arr_modules"] and result["arr_sections"]:
                 result["arr_modules"] = json.loads(result["arr_modules"])
                 result["arr_sections"] = json.loads(result["arr_sections"])
                 result["ability"] = {"action": "manage", "subject": "all"}
@@ -46,7 +50,7 @@ class LoginApi(APIView):
             response = {
                 "message": "LoginSuccessFull",
                 "token": token.key,
-                "user":result
+                "user": result
             }
 
             return Response(data=response, status=status.HTTP_200_OK)
@@ -80,11 +84,13 @@ def logout(request):
 def generate_slug(name):
     return slugify(name)
 
+
 @api_view(['GET'])
 def viewGetRoles(request):
     roles = Roles.objects.all()
     serializer = RoleSerializer(roles, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def viewGetDocumentTypes(request):
@@ -92,11 +98,13 @@ def viewGetDocumentTypes(request):
     serializer = DocumentTypeSerializer(document_types, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 def viewGetCountries(request):
     countries = StaticCountries.objects.all()
     serializer = CountrySerializer(countries, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def viewGetCategoriesList(request):
@@ -104,11 +112,13 @@ def viewGetCategoriesList(request):
     serializer = CategorySerializer(categories, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 def viewGetRoomFloorsList(request):
     floors = Floor.objects.all()
     serializer = FloorSerializer(floors, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def viewGetRoomPromotionsList(request):
@@ -121,7 +131,7 @@ def viewGetRoomPromotionsList(request):
 @api_view(['POST'])
 def viewRegisterUser(request):
 
-    password =  request.data.get('password')
+    password = request.data.get('password')
     document_number = request.data.get('document_number')
     phone = request.data.get('phone')
 
@@ -141,8 +151,9 @@ def viewRegisterUser(request):
     parameters = [
         json.dumps(user)
     ]
-    result = executeSP('insert_user',parameters)
+    result = executeSP('insert_user', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewUpdateUser(request):
@@ -162,21 +173,28 @@ def viewUpdateUser(request):
     parameters = [
         json.dumps(user)
     ]
-    result = executeSP('update_user',parameters)
+    result = executeSP('update_user', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewGetUsers(request):
     search_txt = request.data.get('search_txt')
-    perpage = request.data.get('perpage') if request.data.get('perpage') else 10
+    perpage = request.data.get(
+        'perpage') if request.data.get('perpage') else 10
     npage = request.data.get('npage') if request.data.get('npage') else 1
-    orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
+    orderBy = request.data.get(
+        'orderBy') if request.data.get('orderBy') else 'desc'
+    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    is_active = request.data.get('status') if request.data.get('status') else None
-    country = request.data.get('country_id') if request.data.get('country_id') else None
-    document_type = request.data.get('document_type_id') if request.data.get('document_type_id') else None
-    role_id = request.data.get('role_id') if request.data.get('role_id') else None
+    is_active = request.data.get(
+        'status') if request.data.get('status') else None
+    country = request.data.get(
+        'country_id') if request.data.get('country_id') else None
+    document_type = request.data.get(
+        'document_type_id') if request.data.get('document_type_id') else None
+    role_id = request.data.get(
+        'role_id') if request.data.get('role_id') else None
     parameters = [
         search_txt,
         perpage,
@@ -188,36 +206,41 @@ def viewGetUsers(request):
         country,
         document_type,
         role_id]
-    result = executeSP('get_users',parameters)
-    
-    return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
+    result = executeSP('get_users', parameters)
+
+    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 # Promotion
+
+
 @api_view(['POST'])
 def viewRegisterPromotion(request):
-        promotion = {
-            "name":  request.data.get('name'),
-            "cost": request.data.get('cost'),
-            "image": request.data.get('image'),
-            "description": request.data.get('description'),
-            "status": 1,
-        }
-        parameters = [
-            json.dumps(promotion)
-        ]
-        result = executeSP('insert_promotion',parameters)
-        return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+    promotion = {
+        "name":  request.data.get('name'),
+        "cost": request.data.get('cost'),
+        "image": request.data.get('image'),
+        "description": request.data.get('description'),
+        "status": 1,
+    }
+    parameters = [
+        json.dumps(promotion)
+    ]
+    result = executeSP('insert_promotion', parameters)
+    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 def viewGetPromotions(request):
     search_txt = request.data.get('search_txt')
-    perpage = request.data.get('perpage') if request.data.get('perpage') else 10
+    perpage = request.data.get(
+        'perpage') if request.data.get('perpage') else 10
     npage = request.data.get('npage') if request.data.get('npage') else 1
-    orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
+    orderBy = request.data.get(
+        'orderBy') if request.data.get('orderBy') else 'desc'
+    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status_promotion = request.data.get('status') if request.data.get('status') else None
+    status_promotion = request.data.get(
+        'status') if request.data.get('status') else None
     parameters = [
         search_txt,
         perpage,
@@ -227,26 +250,29 @@ def viewGetPromotions(request):
         date_to,
         status_promotion,
     ]
-    result = executeSP('get_promotions',parameters)
-    
-    return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
+    result = executeSP('get_promotions', parameters)
+
+    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 # Category
+
+
 @api_view(['POST'])
 def viewRegisterCategory(request):
-        category = {
-            "name":  request.data.get('name'),
-            "slug": slugify(request.data.get('name')),
-            "color": request.data.get('color'),
-            "description": request.data.get('description'),
-            "image": request.data.get('image'),
-            "status": 1,
-        }
-        parameters = [
-            json.dumps(category)
-        ]
-        result = executeSP('insert_category',parameters)
-        return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+    category = {
+        "name":  request.data.get('name'),
+        "slug": slugify(request.data.get('name')),
+        "color": request.data.get('color'),
+        "description": request.data.get('description'),
+        "image": request.data.get('image'),
+        "status": 1,
+    }
+    parameters = [
+        json.dumps(category)
+    ]
+    result = executeSP('insert_category', parameters)
+    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewUpdateCategory(request):
@@ -264,16 +290,19 @@ def viewUpdateCategory(request):
     parameters = [
         json.dumps(category)
     ]
-    result = executeSP('update_category',parameters)
+    result = executeSP('update_category', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewGetCategories(request):
     search_txt = request.data.get('search_txt')
-    perpage = request.data.get('perpage') if request.data.get('perpage') else 10
+    perpage = request.data.get(
+        'perpage') if request.data.get('perpage') else 10
     npage = request.data.get('npage') if request.data.get('npage') else 1
-    orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
+    orderBy = request.data.get(
+        'orderBy') if request.data.get('orderBy') else 'desc'
+    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
     parameters = [
         search_txt,
@@ -283,22 +312,37 @@ def viewGetCategories(request):
         date_from,
         date_to,
     ]
-    result = executeSP('get_room_categories2',parameters)
-    
-    return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
+    result = executeSP('get_room_categories2', parameters)
+
+    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 # Banner
+
+
 @api_view(['POST'])
 def viewRegisterBanner(request):
-        banner = {
-            "image":  request.data.get('image'),
-            "status": 1,
-        }
-        parameters = [
-            json.dumps(banner)
-        ]
-        result = executeSP('insert_banner',parameters)
-        return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
+    directory = str('media/banners/')
+    banner_name = request.data.get('name')
+    banner_full = str(uuid.uuid4())+'.jpg'
+    banner = request.FILES["banner"]
+
+    obj_banner = {
+        "name":  banner_name,
+        "image": banner_full,
+    }
+    parameters = [
+        json.dumps(obj_banner)
+    ]
+
+    result = executeSP('insert_banner', parameters)
+
+    imageBanner = Image.open(banner)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    imageBanner.save(directory+banner_full)
+    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewUpdateBanner(request):
@@ -312,8 +356,9 @@ def viewUpdateBanner(request):
     parameters = [
         json.dumps(banner)
     ]
-    result = executeSP('update_banner',parameters)
+    result = executeSP('update_banner', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewGetBanners(request):
@@ -321,7 +366,7 @@ def viewGetBanners(request):
     perpage = request.data.get('perpage') if request.data.get('perpage') else 10
     npage = request.data.get('npage') if request.data.get('npage') else 1
     orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
+    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
     parameters = [
         search_txt,
@@ -330,12 +375,15 @@ def viewGetBanners(request):
         orderBy,
         date_from,
         date_to,
+        request.data.get('status')
     ]
-    result = executeSP('get_banners',parameters)
-    
-    return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
+    result = executeSP('get_banners', parameters)
+
+    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 # Client
+
+
 @api_view(['POST'])
 def viewRegisterClient(request):
     client = {
@@ -351,8 +399,9 @@ def viewRegisterClient(request):
     parameters = [
         json.dumps(client)
     ]
-    result = executeSP('insert_client',parameters)
+    result = executeSP('insert_client', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewUpdateClient(request):
@@ -374,26 +423,33 @@ def viewUpdateClient(request):
     parameters = [
         json.dumps(client)
     ]
-    result = executeSP('update_client',parameters)
+    result = executeSP('update_client', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 def viewGetClientsSelect(request):
     parameters = []
-    result = executeSP('get_clients_select',parameters)
+    result = executeSP('get_clients_select', parameters)
     return Response(data=result, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewGetClients(request):
     search_txt = request.data.get('search_txt')
-    perpage = request.data.get('perpage') if request.data.get('perpage') else 10
+    perpage = request.data.get(
+        'perpage') if request.data.get('perpage') else 10
     npage = request.data.get('npage') if request.data.get('npage') else 1
-    orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
+    orderBy = request.data.get(
+        'orderBy') if request.data.get('orderBy') else 'desc'
+    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status_client = request.data.get('status') if request.data.get('status') else None
-    country = request.data.get('country_id') if request.data.get('country_id') else None
-    document_type = request.data.get('document_type_id') if request.data.get('document_type_id') else None
+    status_client = request.data.get(
+        'status') if request.data.get('status') else None
+    country = request.data.get(
+        'country_id') if request.data.get('country_id') else None
+    document_type = request.data.get(
+        'document_type_id') if request.data.get('document_type_id') else None
     parameters = [
         search_txt,
         perpage,
@@ -404,11 +460,13 @@ def viewGetClients(request):
         document_type,
         status_client,
         country]
-    result = executeSP('get_clients',parameters)
-    
-    return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
+    result = executeSP('get_clients', parameters)
+
+    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 # Promotions
+
+
 @api_view(['POST'])
 def viewRegisterPromotion(request):
 
@@ -423,8 +481,9 @@ def viewRegisterPromotion(request):
     parameters = [
         json.dumps(promotion)
     ]
-    result = executeSP('insert_promotion',parameters)
+    result = executeSP('insert_promotion', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewUpdatePromotion(request):
@@ -441,18 +500,22 @@ def viewUpdatePromotion(request):
     parameters = [
         json.dumps(promotion)
     ]
-    result = executeSP('update_promotion',parameters)
+    result = executeSP('update_promotion', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewGetPromotions(request):
     search_txt = request.data.get('search_txt')
-    perpage = request.data.get('perpage') if request.data.get('perpage') else 10
+    perpage = request.data.get(
+        'perpage') if request.data.get('perpage') else 10
     npage = request.data.get('npage') if request.data.get('npage') else 1
-    orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
+    orderBy = request.data.get(
+        'orderBy') if request.data.get('orderBy') else 'desc'
+    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status_promotion = request.data.get('status') if request.data.get('status') else None
+    status_promotion = request.data.get(
+        'status') if request.data.get('status') else None
     parameters = [
         search_txt,
         perpage,
@@ -461,14 +524,16 @@ def viewGetPromotions(request):
         date_from,
         date_to,
         status_promotion]
-    result = executeSP('get_promotions',parameters)
-    
-    return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
+    result = executeSP('get_promotions', parameters)
+
+    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 # Reserve
+
+
 @api_view(['POST'])
 def viewRegisterReserve(request):
-    
+
     detail = request.data.get('detail')
     reserve = {
         "client":  request.data.get('client'),
@@ -476,17 +541,17 @@ def viewRegisterReserve(request):
         "payment_method": request.data.get('payment_method'),
         "description": request.data.get('description'),
         "total": request.data.get('total'),
-         "observation": "ninguna",
+        "observation": "ninguna",
         "reserve_date": "2023-10-1",
     }
 
-    print(detail)
     parameters = [
         json.dumps(reserve),
         json.dumps(detail)
     ]
-    result = executeSP('insert_reserve',parameters)
+    result = executeSP('insert_reserve', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewUpdateReserve(request):
@@ -505,18 +570,22 @@ def viewUpdateReserve(request):
     parameters = [
         json.dumps(reserve)
     ]
-    result = executeSP('update_reserve',parameters)
+    result = executeSP('update_reserve', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewGetReserves(request):
     search_txt = request.data.get('search_txt')
-    perpage = request.data.get('perpage') if request.data.get('perpage') else 10
+    perpage = request.data.get(
+        'perpage') if request.data.get('perpage') else 10
     npage = request.data.get('npage') if request.data.get('npage') else 1
-    orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
+    orderBy = request.data.get(
+        'orderBy') if request.data.get('orderBy') else 'desc'
+    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status_room = request.data.get('status') if request.data.get('status') else None
+    status_room = request.data.get(
+        'status') if request.data.get('status') else None
     client = request.data.get('client') if request.data.get('client') else None
     room = request.data.get('room') if request.data.get('room') else None
     parameters = [
@@ -530,9 +599,9 @@ def viewGetReserves(request):
         # status,
         # client,
     ]
-    result = executeSP('get_reserves',parameters)
-    
-    return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
+    result = executeSP('get_reserves', parameters)
+
+    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 
 # Room
@@ -563,8 +632,9 @@ def viewRegisterRoom(request):
     parameters = [
         json.dumps(room)
     ]
-    result = executeSP('insert_room',parameters)
+    result = executeSP('insert_room', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewUpdateRoom(request):
@@ -594,52 +664,62 @@ def viewUpdateRoom(request):
     parameters = [
         json.dumps(room)
     ]
-    result = executeSP('update_room',parameters)
+    result = executeSP('update_room', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 def viewGetRoomsSelect(request):
-    
+
     parameters = []
-    result = executeSP('get_rooms_select',parameters)
+    result = executeSP('get_rooms_select', parameters)
     return Response(data=result, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 def viewGetMethodSelect(request):
-    
+
     parameters = []
-    result = executeSP('get_method_select',parameters)
+    result = executeSP('get_method_select', parameters)
     return Response(data=result, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+
+@api_view(['POST'])
 def viewGetReserveSelect(request):
-    
-    parameters = []
-    result = executeSP('get_reserves_select',parameters)
+
+    parameters = [request.data.get('client_id')]
+    result = executeSP('get_reserves_select', parameters)
+    for reserve in result:
+        reserve["rooms"] = json.loads(reserve["rooms"])
+
     return Response(data=result, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewGetRooms(request):
     search_txt = request.data.get('search_txt')
-    perpage = request.data.get('perpage') if request.data.get('perpage') else 10
+    perpage = request.data.get(
+        'perpage') if request.data.get('perpage') else 10
     npage = request.data.get('npage') if request.data.get('npage') else 1
-    orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
+    orderBy = request.data.get(
+        'orderBy') if request.data.get('orderBy') else 'desc'
+    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
-    status_room = request.data.get('status') if request.data.get('status') else None
-    floor=  request.data.get('floor'),
-    personal=  request.data.get('personal'),
-    promotion= request.data.get('promotion'),
-    category= request.data.get('category'),
-    guest_number= request.data.get('guest_number'),
-    number= request.data.get('number'),
-    has_bed= request.data.get('has_bed'),
-    has_tv= request.data.get('has_tv'),
-    has_hot_water= request.data.get('has_hot_water'),
-    has_jacuzzi= request.data.get('has_jacuzzi'),
-    has_private_bathroom= request.data.get('has_private_bathroom'),
-    has_couch= request.data.get('has_couch'),
-    has_wifi= request.data.get('has_wifi'),
+    status_room = request.data.get(
+        'status') if request.data.get('status') else None
+    floor = request.data.get('floor'),
+    personal = request.data.get('personal'),
+    promotion = request.data.get('promotion'),
+    category = request.data.get('category'),
+    guest_number = request.data.get('guest_number'),
+    number = request.data.get('number'),
+    has_bed = request.data.get('has_bed'),
+    has_tv = request.data.get('has_tv'),
+    has_hot_water = request.data.get('has_hot_water'),
+    has_jacuzzi = request.data.get('has_jacuzzi'),
+    has_private_bathroom = request.data.get('has_private_bathroom'),
+    has_couch = request.data.get('has_couch'),
+    has_wifi = request.data.get('has_wifi'),
     parameters = [
         search_txt,
         perpage,
@@ -662,9 +742,9 @@ def viewGetRooms(request):
         # has_couch,
         # has_wifi,
     ]
-    result = executeSP('get_rooms',parameters)
-    
-    return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
+    result = executeSP('get_rooms', parameters)
+
+    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 
 # Testimonial
@@ -675,15 +755,15 @@ def viewRegisterTestimonial(request):
         "description": request.data.get('description'),
         "client": request.data.get('client'),
         "reserve": request.data.get('reserve'),
-        "room": request.data.get('room'),
         "status": 1,
     }
 
     parameters = [
         json.dumps(testimonial)
     ]
-    result = executeSP('insert_testimonial',parameters)
+    result = executeSP('insert_testimonial', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewUpdateTestimonial(request):
@@ -694,22 +774,25 @@ def viewUpdateTestimonial(request):
         "client": request.data.get('client'),
         "reserve": request.data.get('reserve'),
         "room": request.data.get('room'),
-       "status": request.data.get('status')
+        "status": request.data.get('status')
     }
 
     parameters = [
         json.dumps(testimonial)
     ]
-    result = executeSP('update_testimonial',parameters)
+    result = executeSP('update_testimonial', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def viewGetTestimonials(request):
     search_txt = request.data.get('search_txt')
-    perpage = request.data.get('perpage') if request.data.get('perpage') else 10
+    perpage = request.data.get(
+        'perpage') if request.data.get('perpage') else 10
     npage = request.data.get('npage') if request.data.get('npage') else 1
-    orderBy = request.data.get('orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from') # 2022-10-1 format YYYY-MM-DD
+    orderBy = request.data.get(
+        'orderBy') if request.data.get('orderBy') else 'desc'
+    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
     date_to = request.data.get('date_to')
     client = request.data.get('client')
     parameters = [
@@ -720,14 +803,16 @@ def viewGetTestimonials(request):
         date_from,
         date_to
     ]
-    result = executeSP('get_testimonials',parameters)
-    
-    return Response(data=paginateBootrstapVue(result=result,page=npage,perpage=perpage), status=status.HTTP_200_OK)
+    result = executeSP('get_testimonials', parameters)
+    for testimonial in result:
+        testimonial["rooms"] = json.loads(testimonial["rooms"])
+
+    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def viewGetDashboardIndicators(request):
-    result = executeSP('get_dashboard_data',[])
+    result = executeSP('get_dashboard_data', [])
     return Response(data=result, status=status.HTTP_200_OK)
 
 
@@ -739,5 +824,5 @@ def viewGetCalendarReserves(request):
         start_date,
         end_date,
     ]
-    result = executeSP('get_calendar_reserves',parameters)
+    result = executeSP('get_calendar_reserves', parameters)
     return Response(data=result, status=status.HTTP_200_OK)
