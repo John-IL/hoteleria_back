@@ -378,7 +378,9 @@ def viewGetBanners(request):
         request.data.get('status')
     ]
     result = executeSP('get_banners', parameters)
-
+    url_media = os.getenv('APP_URL') + 'media/banners/'
+    for banner in result:
+        banner["image"] = url_media + banner["image"]
     return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 # Client
