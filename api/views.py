@@ -259,23 +259,41 @@ def viewGetPromotions(request):
 
 @api_view(['POST'])
 def viewRegisterCategory(request):
+    directory = str('media/categories/')
+    image_category = request.FILES["image"]
     category = {
         "name":  request.data.get('name'),
         "slug": slugify(request.data.get('name')),
         "color": request.data.get('color'),
         "description": request.data.get('description'),
-        "image": request.data.get('image'),
         "status": 1,
     }
     parameters = [
         json.dumps(category)
     ]
     result = executeSP('insert_category', parameters)
-    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+    result = json.loads(result[0]["response"])
+
+    if result["code"] is 200:
+        image_category = Image.open(image_category)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        image_category.save(directory+result["image"])
+
+    return Response(data=result, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 def viewUpdateCategory(request):
+
+    not_update = True
+    if len(request.FILES) > 0:
+        image_category = request.FILES["image"]
+        not_update = False
+    else:
+        image_category  = request.data.get('image').split('/')[-1]
+        
+    directory = str('media/categories/')
 
     category = {
         "id": request.data.get('id'),
@@ -283,7 +301,7 @@ def viewUpdateCategory(request):
         "slug": slugify(request.data.get('name')),
         "color": request.data.get('color'),
         "description": request.data.get('description'),
-        "image": request.data.get('image'),
+        "image": image_category if not_update else 0,
         "status": request.data.get('status')
     }
 
@@ -291,8 +309,23 @@ def viewUpdateCategory(request):
         json.dumps(category)
     ]
     result = executeSP('update_category', parameters)
-    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+    result = json.loads(result[0]["response"])
 
+    if result["code"] is not 200:
+        return Response(data=result, status=status.HTTP_200_OK)
+    
+    if not_update:
+        return Response(data=result, status=status.HTTP_200_OK)
+    
+    image_category = Image.open(image_category)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    image_category.save(directory+result["new"])
+    
+    if os.path.exists(directory+result["old"]):
+        os.remove(directory+result["old"])
+
+    return Response(data=result, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def viewGetCategories(request):
@@ -313,6 +346,10 @@ def viewGetCategories(request):
         date_to,
     ]
     result = executeSP('get_room_categories2', parameters)
+
+    url_media = os.getenv('APP_URL') + 'media/categories/'
+    for category in result:
+        category["image"] = url_media + category["image"]
 
     return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
@@ -471,12 +508,13 @@ def viewGetClients(request):
 
 @api_view(['POST'])
 def viewRegisterPromotion(request):
-
+    
+    directory = str('media/promotions/')
+    image_promotion = request.FILES["image"]
     promotion = {
         "name":  request.data.get('name'),
         "cost": request.data.get('cost'),
         "description": request.data.get('description'),
-        "image": request.data.get('image'),
         "status": 1,
     }
 
@@ -484,18 +522,34 @@ def viewRegisterPromotion(request):
         json.dumps(promotion)
     ]
     result = executeSP('insert_promotion', parameters)
-    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+
+    result = json.loads(result[0]["response"])
+
+    if result["code"] is 200:
+        image_promotion = Image.open(image_promotion)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        image_promotion.save(directory+result["image"])
+
+    return Response(data=result, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 def viewUpdatePromotion(request):
+    directory = str('media/promotions/')
+    not_update = True
+    if len(request.FILES) > 0:
+        image_promotion = request.FILES["image"]
+        not_update = False
+    else:
+        image_promotion  = request.data.get('image').split('/')[-1]
 
     promotion = {
         "id": request.data.get('id'),
         "name":  request.data.get('name'),
         "cost": request.data.get('cost'),
         "description": request.data.get('description'),
-        "image": request.data.get('image'),
+        "image": image_promotion if not_update else 0,
         "status": request.data.get('status'),
     }
 
@@ -503,7 +557,23 @@ def viewUpdatePromotion(request):
         json.dumps(promotion)
     ]
     result = executeSP('update_promotion', parameters)
-    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+    result = json.loads(result[0]["response"])
+
+    if result["code"] is not 200:
+        return Response(data=result, status=status.HTTP_200_OK)
+    
+    if not_update:
+        return Response(data=result, status=status.HTTP_200_OK)
+    
+    image_promotion = Image.open(image_promotion)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    image_promotion.save(directory+result["new"])
+
+    if os.path.exists(directory+result["old"]):
+        os.remove(directory+result["old"])
+
+    return Response(data=result, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -527,6 +597,10 @@ def viewGetPromotions(request):
         date_to,
         status_promotion]
     result = executeSP('get_promotions', parameters)
+
+    url_media = os.getenv('APP_URL') + 'media/promotions/'
+    for promotion in result:
+        promotion["image"] = url_media + promotion["image"]
 
     return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 

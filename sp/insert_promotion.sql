@@ -1,6 +1,5 @@
 CREATE PROCEDURE insert_promotion(
             IN _table json)
-            
 BEGIN
 	DECLARE error_msg TEXT DEFAULT '';
 	DECLARE error_code INT;
@@ -19,14 +18,14 @@ BEGIN
 			rollback;
 		
 		else
-			
+			set @url_image = concat(MD5(rand()),'.jpg');
  			insert into api_promotion (name,image,description,cost,status,created_at) 
- 						value (_table->>'$.name',_table->>'$.image',_table->>'$.description',_table->>'$.cost',_table->>'$.status',now());
+ 						value (_table->>'$.name',@url_image,_table->>'$.description',_table->>'$.cost',_table->>'$.status',now());
  							  
 		end if;
 	
 	commit;
 	
-	select JSON_OBJECT("code",200,"message","Satisfactoriamente") response;
+	select JSON_OBJECT("code",200,"message","Satisfactoriamente",'image',@url_image) response;
          
   END
