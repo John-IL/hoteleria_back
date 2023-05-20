@@ -1,6 +1,5 @@
 CREATE PROCEDURE insert_testimonial(
             IN _table json)
-            
 BEGIN
 	DECLARE error_msg TEXT DEFAULT '';
 	DECLARE error_code INT;
@@ -20,8 +19,8 @@ BEGIN
 		
 		else
 			
- 			insert into api_testimonials (reserve_id,client_id,room_id,description,status,created_at) 
- 						value (_table->>'$.reserve',_table->>'$.client',_table->>'$.room',_table->>'$.description',_table->>'$.status',now());
+ 			insert into api_testimonials (reserve_id,client_id,description,status,created_at) 
+ 						value (_table->>'$.reserve',_table->>'$.client',_table->>'$.description',_table->>'$.status',now());
 		end if;
 	
 	commit;

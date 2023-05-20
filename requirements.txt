@@ -10,3 +10,6 @@ sqlparse==0.4.3
 pandas==1.3.4 
 mysql-connector-python==8.0.32
 django-cors-headers==3.14.0
+Pillow==8.4.0
+scikit-learn==1.2.2
+joblib==1.2.0

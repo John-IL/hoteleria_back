@@ -1,4 +1,4 @@
-CREATE PROCEDURE get_testimonials(
+CREATE  PROCEDURE get_testimonials(
           IN search_txt VARCHAR(250),
           IN perpage INT,
           IN npage INT,
@@ -10,12 +10,14 @@ BEGIN
         
         DECLARE cc INT DEFAULT 0;
         
-        SELECT
+        select distinct
           COUNT(t.id) INTO cc
         FROM
           api_testimonials t
           inner join api_clients c on c.id = t.client_id
-          inner join api_room r on r.id = t.room_id 
+          inner join api_reserve re on re.id = t.reserve_id
+          inner join api_reservedatedetail rd on rd.reserve_id = re.id
+          inner join api_room r on r.id = rd.room_id
         WHERE
         
           CASE
@@ -43,10 +45,12 @@ BEGIN
         
         SET
           @query = CONCAT(
-            "SELECT t.id, t.description, t.status, concat(c.first_name,' ',c.last_name) client, r.number, r.id reserve_id,  ",  cc ," cc 
+            "SELECT t.id, re.id reserve_id, t.description, t.status, concat(c.first_name,' ',c.last_name) client, JSON_ARRAYAGG(JSON_OBJECT('number',r.number)) rooms,  ",  cc ," cc 
              FROM  api_testimonials t
           inner join api_clients c on c.id = t.client_id
-          inner join api_room r on r.id = t.room_id 
+          inner join api_reserve re on re.id = t.reserve_id
+          inner join api_reservedatedetail rd on rd.reserve_id = re.id
+          inner join api_room r on r.id = rd.room_id
             WHERE ",
             
             CASE
@@ -67,7 +71,7 @@ BEGIN
                         or t.description like '%", search_txt, "%' ")),
                         
               
-            CONCAT(" order by t.created_at ", orderBy, " limit ", perpage, " offset ", npage, ";")
+            CONCAT(" group by t.id ", orderBy, " limit ", perpage, " offset ", npage, ";")
           
           );
         
