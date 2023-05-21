@@ -9,15 +9,24 @@ from .models import UserProfile, Roles, StaticDocumentTypes, StaticCountries, Ro
 from django.contrib.auth.hashers import check_password, make_password
 
 import json
-from .utils import executeSP, paginateBootrstapVue
+from .utils import executeSP, paginateBootrstapVue, getNumberOfMonth
 from .serializers import RoleSerializer, DocumentTypeSerializer, CountrySerializer, CategorySerializer, FloorSerializer, PromotionSerializer
 from django.utils.text import slugify
 from PIL import Image
 import os
 import uuid
+import joblib
+import pandas as pd
+from django.conf import settings
 
 # Create your views here.
-
+models_path = os.path.join(settings.BASE_DIR, 'api/models/')
+RESERVE_MODEL = joblib.load(models_path+'amount_reservation.pkl')
+# array_prueba = [
+#     {'Mes': 1, 'Promociones': 2, 'Feriados': 1,'Vacaciones':1,'Eventos':2},
+# ]
+# df_array = pd.DataFrame(array_prueba)
+# print(RESERVE_MODEL.predict(df_array))
 
 class LoginApi(APIView):
 
@@ -210,49 +219,6 @@ def viewGetUsers(request):
 
     return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
-# Promotion
-
-
-@api_view(['POST'])
-def viewRegisterPromotion(request):
-    promotion = {
-        "name":  request.data.get('name'),
-        "cost": request.data.get('cost'),
-        "image": request.data.get('image'),
-        "description": request.data.get('description'),
-        "status": 1,
-    }
-    parameters = [
-        json.dumps(promotion)
-    ]
-    result = executeSP('insert_promotion', parameters)
-    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-def viewGetPromotions(request):
-    search_txt = request.data.get('search_txt')
-    perpage = request.data.get(
-        'perpage') if request.data.get('perpage') else 10
-    npage = request.data.get('npage') if request.data.get('npage') else 1
-    orderBy = request.data.get(
-        'orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
-    date_to = request.data.get('date_to')
-    status_promotion = request.data.get(
-        'status') if request.data.get('status') else None
-    parameters = [
-        search_txt,
-        perpage,
-        npage,
-        orderBy,
-        date_from,
-        date_to,
-        status_promotion,
-    ]
-    result = executeSP('get_promotions', parameters)
-
-    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
 
 # Category
 
@@ -902,3 +868,14 @@ def viewGetCalendarReserves(request):
     ]
     result = executeSP('get_calendar_reserves', parameters)
     return Response(data=result, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def viewPredictReserves(request):
+
+    data_predict =  request.data.get('data_predict')
+    data_frame = pd.DataFrame(data_predict)
+    data_frame["Mes"] = data_frame['Mes'].apply(getNumberOfMonth)
+    result_of_predict = RESERVE_MODEL.predict(data_frame)
+
+    return Response(data=result_of_predict, status=status.HTTP_200_OK)
