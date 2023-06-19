@@ -22,18 +22,19 @@ BEGIN
 		else
 			
  			insert into api_reserve (reserve_date,observation,total,client_id,payment_method_id,personal_id,created_at,status) 
- 						value (_table->>'$.reserve_date',_table->>'$.observation',_table->>'$.total',_table->>'$.client',_table->>'$.payment_method',_table->>'$.personal',now(),1);
+ 						value (now(),_table->>'$.observation',_table->>'$.total',_table->>'$.client',_table->>'$.payment_method',_table->>'$.personal',now(),1);
  			
  			 set @insert_id = @@identity;
                         
 			 while i < JSON_LENGTH(_detail) do
-			 	set @cost = 1;
+			 	set @cost = JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].total')));
 			    set @start_date = JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].start_date')));
              	set @end_date =  JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].end_date')));
-             	set @room = JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].room')));
+             	set @room = JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].id')));
+                set @discount = JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].discount')));
 				select cost into @cost from api_room where id = @room;
 			   
-			   	insert into api_reservedatedetail (start_date,end_date,cost,reserve_id,room_id,status) value(@start_date,@end_date,@cost,@insert_id,@room,1);
+			   	insert into api_reservedatedetail (start_date,end_date,cost,reserve_id,room_id,status,discount) value(@start_date,@end_date,@cost,@insert_id,@room,1, @discount);
 			   	select i+1 into i;
 			   	
              end while;

@@ -51,6 +51,7 @@ urlpatterns = [
     path('room/update', views.viewUpdateRoom, name="update-room"),
     path('room/list', views.viewGetRooms, name="list-room"),
     path('room/list-select', views.viewGetRoomsSelect, name="list-room-select"),
+    path('room/availables', views.viewGetAvailableRooms, name="list-room-availables"),
     path('method/list-select', views.viewGetMethodSelect, name="list-method-select"),
     # testimonial
     path('testimonial/register', views.viewRegisterTestimonial, name="register-testimonial"),

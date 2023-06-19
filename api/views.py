@@ -618,7 +618,6 @@ def viewRegisterReserve(request):
         "description": request.data.get('description'),
         "total": request.data.get('total'),
         "observation": "ninguna",
-        "reserve_date": "2023-10-1",
     }
 
     parameters = [
@@ -902,3 +901,15 @@ def viewGetCalendarReserves(request):
     ]
     result = executeSP('get_calendar_reserves', parameters)
     return Response(data=result, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def viewGetAvailableRooms(request):
+    start_date = request.data.get('start_date')
+    end_date = request.data.get('end_date')
+    parameters = [
+        start_date,
+        end_date,
+    ]
+    result = executeSP('get_available_rooms', parameters)
+    return Response(data=result, status=status.HTTP_200_OK)
+

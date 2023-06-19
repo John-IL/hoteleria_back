@@ -199,6 +199,7 @@ class ReserveDateDetail(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     cost = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     reserve = models.ForeignKey(Reserve, on_delete=models.CASCADE, verbose_name="reserve date relation")
     room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="room detail relation")
     status = models.BooleanField(default=True)

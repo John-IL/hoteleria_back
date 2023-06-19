@@ -30,7 +30,7 @@ def paginateBootrstapVue(result, perpage, page):
         "current_page": page,
         "data": result,
         "first_page_url": "/?page=1",
-        "from": from_to,
+        "from": from_to if total > 0 else 0,
         "last_page": last_page,
         "last_page_url": "/?page=" + str(last_page),
         "next_page_url": "/?page=" + str(next_page) if page != last_page else "",
@@ -38,7 +38,7 @@ def paginateBootrstapVue(result, perpage, page):
         "per_page": perpage,
         "prev_page_url": "/?page=" + str(prev_page) if page != 1 else "",
         "perpage": perpage,
-        "to":to,
+        "to": to if total > to else total,
         "total":total
         }
     
