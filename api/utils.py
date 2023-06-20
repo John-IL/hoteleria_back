@@ -39,17 +39,10 @@ def paginateBootrstapVue(result, perpage, page):
         "per_page": perpage,
         "prev_page_url": "/?page=" + str(prev_page) if page != 1 else "",
         "perpage": perpage,
-<<<<<<< HEAD
         "to": to if total > to else total,
         "total":total
         }
     
-=======
-        "to": to,
-        "total": total
-    }
-
->>>>>>> master
     return paginate
 
 
