@@ -655,19 +655,16 @@ def viewGetReserves(request):
     perpage = request.data.get(
         'perpage') if request.data.get('perpage') else 10
     npage = request.data.get('npage') if request.data.get('npage') else 1
-    orderBy = request.data.get(
-        'orderBy') if request.data.get('orderBy') else 'desc'
-    date_from = request.data.get('date_from')  # 2022-10-1 format YYYY-MM-DD
-    date_to = request.data.get('date_to')
-    status_room = request.data.get(
-        'status') if request.data.get('status') else None
-    client = request.data.get('client') if request.data.get('client') else None
-    room = request.data.get('room') if request.data.get('room') else None
+    order_desc = request.data.get('orderDesc')
+    order_by = request.data.get('orderby')
+    date_from = request.data.get('from')  # 2022-10-1 format YYYY-MM-DD
+    date_to = request.data.get('to')
     parameters = [
         search_txt,
         perpage,
         npage,
-        orderBy,
+        order_by,
+        order_desc,
         date_from,
         date_to,
         # room
