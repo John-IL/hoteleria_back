@@ -887,3 +887,30 @@ def viewGetAvailableRooms(request):
     result = executeSP('get_available_rooms', parameters)
     return Response(data=result, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
+def validateUniqueRoom(request):
+    room = request.data.get('room')
+    parameters = [
+        room,
+    ]
+    result = executeSP('validate_unique_room', parameters)
+    return Response(data=result, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def viewRegisterMessage(request):
+
+    testimonial = {
+        "first_name": request.data.get('first_name'),
+        "last_name": request.data.get('last_name'),
+        "email": request.data.get('email'),
+        "phone": request.data.get('phone'),
+        "body": request.data.get('message'),
+    }
+
+    parameters = [
+        json.dumps(testimonial)
+    ]
+    result = executeSP('insert_message', parameters)
+    return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
+

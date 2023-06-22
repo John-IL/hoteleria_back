@@ -2,6 +2,8 @@ import os
 import csv
 import mysql.connector
 from django.contrib.auth.hashers import make_password
+from api.utils import executeSP
+import json
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings") 
 import django
@@ -110,7 +112,6 @@ with open('data/sections.csv', newline='', encoding='utf-8-sig', mode='r') as f:
                 user_id = item.id
             )
 
-## read and execute store procedure
 
 path_migrations = 'sp/' 
 archivos_sql = os.listdir('sp')
@@ -121,6 +122,80 @@ for archivo in archivos_sql:
         contenido_sql = f.read()
         cursor.execute(contenido_sql)
 
+with open('data/clients.csv', newline='', encoding='utf-8-sig', mode='r') as f:
+    reader = csv.reader(f, delimiter=';')
+    for row in reader:
+        client = {
+        "first_name":  row[0],
+        "last_name": row[1],
+        "email": row[3],
+        "phone": row[2],
+        "country": 1,
+        "document_type": 1,
+        "document_number": row[4],
+        "status": 1,
+        }
+        parameters = [
+            json.dumps(client)
+        ]
+        result = executeSP('insert_client', parameters)
+
+with open('data/room_category.csv', newline='', encoding='utf-8-sig', mode='r') as f:
+    reader = csv.reader(f, delimiter=';')
+    for row in reader:
+        category = {
+            "name":  row[0],
+            "slug": row[1],
+            "color": row[2],
+            "description": row[4] ,
+            "status": 1,
+        }
+        parameters = [
+            json.dumps(category)
+        ]
+        result = executeSP('insert_category', parameters)
+
+    promotion = {
+        "name":  "Basica",
+        "cost": 0,
+        "description": "Es la promocion por defecto",
+        "status": 1,
+    }
+
+    parameters = [
+        json.dumps(promotion)
+    ]
+    result = executeSP('insert_promotion', parameters)
+
+with open('data/rooms.csv', newline='', encoding='utf-8-sig', mode='r') as f:
+    reader = csv.reader(f, delimiter=';')
+    for row in reader:
+        room = {
+        "name": row[1],
+        "slug": row[2],
+        "guest_number": row[3],
+        "number": row[4],
+        "description": row[5],
+        "has_bed": row[6],
+        "has_tv": row[7],
+        "has_hot_water": row[8],
+        "has_jacuzzi": row[9],
+        "has_private_bathroom": row[10],
+        "has_couch": row[11],
+        "has_balcony": row[12],
+        "has_wifi": row[13],
+        "cost": row[14],
+        "status": 1,
+        "category": row[17],
+        "floor":  row[18],
+        "promotion": row[19]
+        }
+        parameters = [
+            json.dumps(room)
+        ]
+        result = executeSP('insert_room', parameters)
+        print(result)
+
+
 mydb.close()
 
-## 

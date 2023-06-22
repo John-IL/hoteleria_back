@@ -216,3 +216,12 @@ class Banners(models.Model):
     name = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=True)
+
+class Messages(models.Model):
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
+    email = models.CharField(max_length=300)
+    phone = models.CharField(max_length=30)
+    body = models.TextField()
+    was_readed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)

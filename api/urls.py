@@ -52,11 +52,16 @@ urlpatterns = [
     path('room/list', views.viewGetRooms, name="list-room"),
     path('room/list-select', views.viewGetRoomsSelect, name="list-room-select"),
     path('room/availables', views.viewGetAvailableRooms, name="list-room-availables"),
+    path('room/validate-unique', views.validateUniqueRoom, name="validate-unique-room"),
+    
     path('method/list-select', views.viewGetMethodSelect, name="list-method-select"),
+    
     # testimonial
     path('testimonial/register', views.viewRegisterTestimonial, name="register-testimonial"),
     path('testimonial/update', views.viewUpdateTestimonial, name="update-testimonial"),
     path('testimonial/list', views.viewGetTestimonials, name="list-testimonial"),
+
+    path('message/register', views.viewRegisterMessage, name="register-message"),
 
     # dashboard 
     path('dashboard/indicators', views.viewGetDashboardIndicators, name="dashboard-indicators"),
