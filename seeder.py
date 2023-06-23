@@ -194,7 +194,6 @@ with open('data/rooms.csv', newline='', encoding='utf-8-sig', mode='r') as f:
             json.dumps(room)
         ]
         result = executeSP('insert_room', parameters)
-        print(result)
 
 
 mydb.close()
