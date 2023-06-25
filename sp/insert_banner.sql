@@ -24,8 +24,8 @@ BEGIN
   else
    -- main content
    
-    insert into api_banners (name, image, created_at, status) 
-          value (_data->>'$.name', _data->>'$.image',now(), 1);
+    insert into api_banners (name, image, created_at, status, room_id) 
+          value (_data->>'$.name', _data->>'$.image',now(), 1, _data->>'$.room');
           
    -- end main content
   end if;

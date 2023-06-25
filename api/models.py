@@ -139,12 +139,6 @@ class RoomCategory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=True)
 
-class RoomCategoryDetail(models.Model):
-    room_category = models.ForeignKey(RoomCategory, on_delete=models.CASCADE, verbose_name="room categoy relation")
-    description = models.TextField()
-    icon = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    status = models.BooleanField(default=True)
 class Promotion(models.Model):
     name = models.CharField(max_length=250)
     image = models.TextField(blank=True)
@@ -215,6 +209,7 @@ class Banners(models.Model):
     image = models.TextField()
     name = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name="room detail relation")
     status = models.BooleanField(default=True)
 
 class Messages(models.Model):

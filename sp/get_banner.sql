@@ -46,8 +46,8 @@ BEGIN
         
         SET
           @query = CONCAT(
-            "SELECT ab.id, ab.name, ab.image, ab.status, ab.created_at ,  ",  cc ," cc 
-              from api_banners ab WHERE ",
+            "SELECT ab.id, ab.name, ab.image, ab.status, ab.created_at, ar.number ,  ",  cc ," cc 
+              from api_banners ab join api_room ar on ar.id = ab.room_id  WHERE ",
             
             CASE
               WHEN(date_to IS NOT NULL AND date_from IS NOT NULL OR date_to != "" AND date_from != "") 

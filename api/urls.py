@@ -28,6 +28,8 @@ urlpatterns = [
     path('banner/register', views.viewRegisterBanner, name="register-banner"),
     path('banner/update', views.viewUpdateBanner, name="update-banner"),
     path('banner/list', views.viewGetBanners, name="list-banner"),
+    path('banner/last-10', views.viewGetLastBanners, name="list-10"),
+
 
     # client
     path('client/register', views.viewRegisterClient, name="register-client"),
@@ -62,6 +64,9 @@ urlpatterns = [
     path('testimonial/list', views.viewGetTestimonials, name="list-testimonial"),
 
     path('message/register', views.viewRegisterMessage, name="register-message"),
+    path('message/list', views.viewGetMessages, name="list-messages"),
+    path('message/update-status', views.viewUpdateMessageStatus, name="update-messages"),
+    path('message/not-readed', views.viewGetMessagesNotReaded, name="list-message-not-readed"),
 
     # dashboard 
     path('dashboard/indicators', views.viewGetDashboardIndicators, name="dashboard-indicators"),

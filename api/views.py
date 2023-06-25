@@ -327,12 +327,14 @@ def viewRegisterBanner(request):
 
     directory = str('media/banners/')
     banner_name = request.data.get('name')
+    room = request.data.get('room_id')
     banner_full = str(uuid.uuid4())+'.jpg'
     banner = request.FILES["banner"]
 
     obj_banner = {
         "name":  banner_name,
         "image": banner_full,
+        "room": room
     }
     parameters = [
         json.dumps(obj_banner)
@@ -353,7 +355,8 @@ def viewUpdateBanner(request):
     banner = {
         "id": request.data.get('id'),
         "image": request.data.get('image'),
-        "status": request.data.get('status')
+        "status": request.data.get('status'),
+        "room": request.data.get('room'),
     }
 
     parameters = [
@@ -914,3 +917,51 @@ def viewRegisterMessage(request):
     result = executeSP('insert_message', parameters)
     return Response(data=json.loads(result[0]["response"]), status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def viewGetMessagesNotReaded(request):
+    parameters = [
+    ]
+    result = executeSP('get_messages_not_readed', parameters)
+    return Response(data=result, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def viewGetMessages(request):
+    search_txt = request.data.get('search_txt')
+    perpage = request.data.get(
+        'perpage') if request.data.get('perpage') else 10
+    npage = request.data.get('npage') if request.data.get('npage') else 1
+    orderBy = request.data.get(
+        'orderBy') if request.data.get('orderBy') else 'desc'
+    date_from = request.data.get('from')  # 2022-10-1 format YYYY-MM-DD
+    date_to = request.data.get('to')
+    status_message = request.data.get('status')
+    parameters = [
+        search_txt,
+        perpage,
+        npage,
+        orderBy,
+        date_from,
+        date_to,
+        status_message
+    ]
+    result = executeSP('get_messages', parameters)
+
+    return Response(data=paginateBootrstapVue(result=result, page=npage, perpage=perpage), status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def viewUpdateMessageStatus(request):
+    parameters = [
+        request.data.get('message')
+    ]
+    result = executeSP('update_status_message', parameters)
+    return Response(data=result, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def viewGetLastBanners(request):
+    parameters = [
+    ]
+    result = executeSP('get_last_banners', parameters)
+    url_media = os.getenv('APP_URL') + 'media/banners/'
+    for banner in result:
+        banner["image"] = url_media + banner["image"]
+    return Response(data=result, status=status.HTTP_200_OK)
