@@ -1,6 +1,5 @@
 from django.db import connection
 import math
-import calendar
 
 
 def executeSP(sp, parametres):

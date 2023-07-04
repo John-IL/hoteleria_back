@@ -73,4 +73,5 @@ urlpatterns = [
     path('dashboard/calendar-reserves', views.viewGetCalendarReserves, name="dashboard-calendar-reserves"),
 
     path('predict/reserves', views.viewPredictReserves, name="predict-reserves"),
+    path('report/reserves', views.viewReserveReport, name="report-reserves")
 ]

@@ -1,13 +1,12 @@
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import UserProfile, Roles, StaticDocumentTypes, StaticCountries, RoomCategory, Floor, Promotion
 from django.contrib.auth.hashers import check_password, make_password
-
+from django.http import HttpResponse
 import json
 from .utils import executeSP, paginateBootrstapVue, getNumberOfMonth
 from .serializers import RoleSerializer, DocumentTypeSerializer, CountrySerializer, CategorySerializer, FloorSerializer, PromotionSerializer
@@ -18,6 +17,8 @@ import uuid
 import joblib
 import pandas as pd
 from django.conf import settings
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 # Create your views here.
 models_path = os.path.join(settings.BASE_DIR, 'api/models/')
@@ -965,3 +966,23 @@ def viewGetLastBanners(request):
     for banner in result:
         banner["image"] = url_media + banner["image"]
     return Response(data=result, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def viewReserveReport(request):
+    template_path = 'reserve/reserves.html'
+    context = {'myvar': 'this is your template context'}
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error then show some funny view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
