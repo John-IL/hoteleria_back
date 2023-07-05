@@ -32,10 +32,13 @@ BEGIN
              	set @end_date =  JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].end_date')));
              	set @room = JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].id')));
                 set @discount = JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].discount')));
-				select cost into @cost from api_room where id = @room;
-			   
-			   	insert into api_reservedatedetail (start_date,end_date,cost,reserve_id,room_id,status,discount) value(@start_date,@end_date,@cost,@insert_id,@room,1, @discount);
-			   	select i+1 into i;
+				set @category =  JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].promotion')));
+			    set @promotion =  JSON_UNQUOTE(JSON_EXTRACT(_detail,CONCAT('$[',i,'].code')));
+
+			   	insert into api_reservedatedetail (promotion_id,category,start_date,end_date,cost,reserve_id,room_id,status,discount) 
+				value(@promotion,@category,@start_date,@end_date,@cost,@insert_id,@room,1, @discount);
+			   	
+				select i+1 into i;
 			   	
              end while;
 		end if;

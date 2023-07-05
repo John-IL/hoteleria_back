@@ -190,6 +190,8 @@ class Reserve(models.Model):
     status = models.BooleanField(default=True)
 
 class ReserveDateDetail(models.Model):
+    promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE, verbose_name="promotion relation")
+    category = models.TextField()
     start_date = models.DateField()
     end_date = models.DateField()
     cost = models.DecimalField(max_digits=10, decimal_places=2)

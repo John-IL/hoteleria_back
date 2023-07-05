@@ -970,8 +970,12 @@ def viewGetLastBanners(request):
 
 @api_view(['POST'])
 def viewReserveReport(request):
+    parameters = [
+        '2023-01-01'
+    ]
+    data = executeSP('get_reserves_for_months', parameters)
     template_path = 'reserve/reserves.html'
-    context = {'myvar': 'this is your template context'}
+    context = {'items': data}
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="report.pdf"'

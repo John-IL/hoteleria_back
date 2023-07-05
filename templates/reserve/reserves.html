@@ -1,8 +1,87 @@
 <html>
+
 <head>
     <meta charset="UTF-8">
 </head>
+
+<style>
+    table,
+    th,
+    td {
+        /* border: 1px solid white; */
+        /* border-collapse: collapse; */
+        text-align: center;
+        height: 20px;
+        padding-top: 3px;
+    }
+
+
+    .text-center {
+        text-align: center;
+    }
+
+    .mt-2 {
+        margin-top: 10px;
+    }
+
+    .bg-light {
+        background-color: #82868B;
+        color: white;
+    }
+
+    .border-top {
+        border-top: 1px solid #242424;
+    }
+
+    .border-left {
+        border-left: 1px solid #242424;
+    }
+
+    .border-right {
+        border-right: 1px solid #242424;
+    }
+</style>
+
 <body>
-    {{myvar}}
+    <h1 class="text-center">Reporte de Reservas</h1>
+
+    <div>HOSPEDAJE TONY E.I.R.L</div>
+    <div>RUC: 20550160898</div>
+
+    <table class="mt-2">
+        <tr class="border-top bg-light">
+            <th colspan="2">Cliente</th>
+            <th colspan="3" class="border-left">Habitacion</th>
+            <th colspan="2" class="border-left">Fecha de Reserva</th>
+            <th colspan="2" class="border-left">Pago</th>
+        </tr>
+        <tr class="border-top bg-light">
+            <td>Huesped</td>
+            <td class="border-left">Documento</td>
+            <td class="border-left">N </td>
+            <td class="border-left">Categoria</td>
+            <td class="border-left">Promocion</td>
+            <td class="border-left">Fecha Inicio </td>
+            <td class="border-left">Fecha Salida</td>
+            <td class="border-left">Metodo </td>
+            <td class="border-left">Total</td>
+        </tr>
+        {% for reserve in items %}
+        <tr class="border-top">
+            <td>{{reserve.full_name }}</td>
+            <td>{{reserve.document_number}}</td>
+            <td>{{reserve.nroom}} </td>
+            <td>{{reserve.category}} </td>
+            <td>{{reserve.promotion}}</td>
+            <td>{{reserve.start_date}} </td>
+            <td>{{reserve.end_date}}</td>
+            <td>{{reserve.methods}}</td>
+            <td>S/ {{reserve.cost}}</td>
+        </tr>
+    
+        {% endfor %}
+
+    </table>
 </body>
+
 </html
